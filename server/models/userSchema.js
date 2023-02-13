@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 const nolookalikes = require("nanoid-generate/nolookalikes");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-// const { customAlphabet }  = require("nanoid");
+// const { customAlphabet }  = import("nanoid");
 // var _nanoid = import("nanoid");
-// const nanoid = (0,_nanoid.customAlphabet)("1234567890", 10);
+// const nanoid = customAlphabet("1234567890", 10);
 
 const nolookalikesRndString = nolookalikes(10);
 
@@ -77,6 +77,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     default: nolookalikesRndString,
+    // default: nanoid
   },
   openingDate: {
     type: String,

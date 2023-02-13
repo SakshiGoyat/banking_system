@@ -1,12 +1,13 @@
 {
   "dependencies": {
     "aadhaar-validator": "^1.1.0",
+    "axios": "^1.3.2",
     "bcrypt": "^5.1.0",
     "commander": "^10.0.0",
     "dotenv": "^16.0.3",
     "email-validator": "^2.0.4",
     "express": "^4.18.2",
-    "inquirer": "^9.1.4",
+    "inquirer": "^8.2.5",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.0",
     "nanoid": "^4.0.1",

@@ -10,8 +10,10 @@ const jwt = require("jsonwebtoken");
 
 // importing databases.
 require("../db/conn");
+
 //importing schema
 const User = require("../models/userSchema");
+
 // const { findOne } = require("../models/userSchema");
 
 //changing the data into json.
@@ -119,6 +121,7 @@ router.post("/register", async (req, res) => {
 // router.get("/login", async (req, res)=>{
 //   res.json("in login get route.");
 // })
+
 // login post route
 router.post("/login", async (req, res) => {
   try {
@@ -136,13 +139,13 @@ router.post("/login", async (req, res) => {
       // //using cookies.
       const token = await userLogin.generateAuthToken();
 
-      // console.log(token);
-      // res.cookie("jwt", token, {
-      //   expires: new Date(Date.now() + 25892000000),
-      //   httpOnly: true,
-      // });
+      console.log(token);
+      res.cookie("jwt", token, {
+        expires: new Date(Date.now() + 25892000000),
+        httpOnly: true,
+      });
 
-      res.cookie("jwt", token);
+      // res.cookie("jwt", token);
 
       // console.log(cookie);
 
@@ -169,79 +172,186 @@ router.post("/login", async (req, res) => {
 // })
 
 // // check bank balance (post route)
-// router.post("/balance", Authenticate, async (req, res) => {
-//   try {
-//     // const { email, pin } = req.body;
+router.post("/balance", async (req, res) => {
+  try {
+    const { email, pin } = req.body;
+    console.log("phase 1");
+    // const {pin} = req.body;
+    if (!email || !pin) {
+      return res.json({ error: "invalid credentials" });
+    }
+    console.log("phase 2");
+    const userExist = await User.findOne({ email: email });
 
-//     const {pin} = req.body;
-//     // if (!email || !pin) {
-//     //   return res.json({ error: "invalid credentials" });
-//     // }
-//     // const userExist = await User.findOne({ email: email });
+    if (!pin) {
+      return res.json({ error: "invalid credentials" });
+    }
+    console.log("phase 3");
+    // console.log(userExist);
+    if (userExist) {
+      const ifMatch = await bcrypt.compare(pin, userExist.pin);
 
-//     if(!pin){
-//       return res.json({ error: "invalid credentials" });
-//     }
-
-//     if (userExist) {
-//       const ifMatch = await bcrypt.compare(pin, userExist.pin);
-
-//       if (ifMatch) {
-//         return res.send(userExist.bankBalance);
-//       }
-//     }
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
-
-router.get("/balance", Authenticate, (req, res) => {
-  const balance = req.authuser.bankBalance;
-  if (balance < 1000) {
-    res.json({
-      message: `Current Bank_Balance ${bankBalance}. It should be greater than Rs.1000 for user benefit`,
-    });
-    console.log(
-      `Current Bank_Balance ${bankBalance}. It should be greater than Rs.1000 for user benefit`
-    );
-  } else {
-    res.json({ message: `Current Bank_Balance ${bankBalance}` });
-    console.log(`Current Bank_Balance ${bankBalance}`);
+      console.log("phase 4");
+      console.log(ifMatch);
+      if (ifMatch) {
+        return res.json({ message: `${userExist.bankBalance}` });
+      }
+      console.log("phase 5");
+    }
+  } catch (err) {
+    console.log(err);
   }
 });
+
+// router.get("/balance", Authenticate, (req, res) => {
+//   const balance = req.authuser.bankBalance;
+//   if (balance < 1000) {
+//     res.json({
+//       message: `Current Bank_Balance ${bankBalance}. It should be greater than Rs.1000 for user benefit`,
+//     });
+//     console.log(
+//       `Current Bank_Balance ${bankBalance}. It should be greater than Rs.1000 for user benefit`
+//     );
+//   } else {
+//     res.json({ message: `Current Bank_Balance ${bankBalance}` });
+//     console.log(`Current Bank_Balance ${bankBalance}`);
+//   }
+// });
+
 // check withdrawal money
-// router.post("/withdrawal", async (req, res) => {
-//   try {
-//     const { email, pin, amount } = req.body;
+router.post("/withdrawal", async (req, res) => {
+  try {
+    const { email, pin, amount } = req.body;
 
-//     if(!email || !pin || !amount){
-//       return res.json({error: "invalid credentials"});
-//     }
-//     const userExist = await User.findOne({ email: email });
+    if (!email || !pin || !amount) {
+      return res.json({ error: "invalid credentials" });
+    }
+    const userExist = await User.findOne({ email: email });
 
-//     if (userExist) {
-//       const ifMatch = await bcrypt.compare(pin, userExist.pin);
+    if (userExist) {
+      const ifMatch = await bcrypt.compare(pin, userExist.pin);
 
-//       if (ifMatch) {
-//         if(amount < (userExist.bankBalance -1000)){
-//           return res.json({message: "transaction successful."});
-//         }
-//       }
-//     }
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
+      if (ifMatch) {
+        if (amount < userExist.bankBalance) {
+          res.json({ message: "transaction successful." });
+          const updated = await User.updateOne(
+            { email: email },
+            {
+              $set: {
+                bankBalance: userExist.bankBalance - amount,
+              },
+            }
+          );
+          return console.log(userExist.bankBalance);
+        }
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
 
-// // update
-// router.patch("/register/:email", (req, res)=>{
-//   try{
-//     const email = req.params.email;
-//     User.findByIdAndUpdate(email, req.body);
-//   }catch(err){
-//     console.log(err);
-//   }
-// });
+// deposit
+router.post("/deposit", async (req, res) => {
+  try {
+    const { email, pin, amount } = req.body;
+
+    if (!email || !pin || !amount) {
+      return res.json({ error: "invalid credentials" });
+    }
+    const userExist = await User.findOne({ email: email });
+
+    if (userExist) {
+      const ifMatch = await bcrypt.compare(pin, userExist.pin);
+
+      if (ifMatch) {
+        res.json({ message: "transaction successful." });
+        const updated = await User.updateOne(
+          { email: email },
+          {
+            $set: {
+              bankBalance: userExist.bankBalance + amount,
+            },
+          }
+        );
+        return console.log(userExist.bankBalance);
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+// transfer
+
+router.post("/transfer", async (req, res) => {
+  try {
+    const { email, pin, accountNumber, amount } = req.body;
+
+    if (!email || !pin || !accountNumber || !amount) {
+      return res.json({ error: "Invalid credentials" });
+    }
+
+    const currentUser = await User.findOne({ email: email });
+
+    const userToTransfer = User.findOne({ accountNumber: accountNumber });
+    // console.log(currentUser);
+    console.log("#######################");
+    console.log(userToTransfer);
+
+  //   if (!currentUser && !userToTransfer) {
+  //     return res.json({ error: "user doesn't exist." });
+  //   }
+
+  //   if (currentUser.bankBalance > amount) {
+  //     const updatedCurrentUser = await User.updateOne(
+  //       { email: email },
+  //       {
+  //         $set: {
+  //           bankBalance: currentUser.bankBalance - amount,
+  //         },
+  //       }
+  //     );
+  //     // console.log(updatedCurrentUser);
+  //       console.log("phase 1");
+
+  //     const updatedNewUser = await User.updateOne(
+  //       { accountNumber: userToTransfer.accountNumber },
+  //       {
+  //         $set: {
+  //           bankBalance: userToTransfer.bankBalance + amount,
+  //         },
+  //       }
+  //     );
+  //     console.log("phase 2");
+  //     return res.json({message: "transaction successful."});
+    // }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+// deletion
+router.post("/delete", async (req, res) => {
+  try {
+    const { email, password, accountNumber } = req.body;
+
+    if (!email || !password || !accountNumber) {
+      return res.json({ error: "invalid credentials" });
+    }
+
+    // var resp = console.log("Do you want to delete your account? (yes/no) ", process.argv[2]);
+
+    // if(resp === 'yes'){
+    const userExist = await User.deleteOne({ email: email });
+
+    console.log(userExist);
+    res.json({ message: "user deleted." });
+    // }
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 module.exports = router;
 
