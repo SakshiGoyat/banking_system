@@ -283,7 +283,6 @@ router.post("/deposit", async (req, res) => {
 });
 
 // transfer
-
 router.post("/transfer", async (req, res) => {
   try {
     const { email, pin, accountNumber, amount } = req.body;
@@ -297,7 +296,7 @@ router.post("/transfer", async (req, res) => {
     const userToTransfer = User.findOne({ accountNumber: accountNumber });
     // console.log(currentUser);
     console.log("#######################");
-    console.log(userToTransfer);
+    console.log(userToTransfer.name);
 
   //   if (!currentUser && !userToTransfer) {
   //     return res.json({ error: "user doesn't exist." });
