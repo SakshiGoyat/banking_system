@@ -5,15 +5,18 @@ const Avalidator = require("aadhaar-validator");
 const Authenticate = require("../middleware/authenicate");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
 
 // const nolookalikes = require("nanoid-generate/nolookalikes");
 
 // importing databases.
 require("../db/conn");
 
+// require("../commander") // giving error.
+
 //importing schema
 const User = require("../models/userSchema");
-
+// console.log(User);
 // const { findOne } = require("../models/userSchema");
 
 //changing the data into json.
@@ -44,7 +47,7 @@ router.post("/register", async (req, res) => {
     bankBalance,
   } = req.body;
 
-  const { city, state } = address;
+  // const { city, state } = address;
   //checking whether all the values are filled or not
   if (
     !name ||
@@ -55,8 +58,9 @@ router.post("/register", async (req, res) => {
     !PANCard ||
     !PhoneNo ||
     !FatherName ||
-    !city ||
-    !state ||
+    // !city ||
+    // !state ||
+    !address ||
     !pin ||
     !bankBalance
   ) {
@@ -109,6 +113,10 @@ router.post("/register", async (req, res) => {
 
     if (userRegister) {
       res.status(201).json({ message: "user registered successfully" });
+      fs.writeFile("accountNumber.txt", userRegister.accountNumber, function (err) {
+        if (err) throw err;
+        console.log("Saved!");
+      });
     } else {
       res.status(404).json({ message: "user is not registered successfully" });
     }
@@ -125,6 +133,7 @@ router.post("/register", async (req, res) => {
 // login post route
 router.post("/login", async (req, res) => {
   try {
+    // setting values
     const { email, password, accountNumber } = req.body;
 
     if (!email || !password || !accountNumber) {
@@ -132,47 +141,50 @@ router.post("/login", async (req, res) => {
     }
 
     const userLogin = await User.findOne({ email: email });
+    console.log(userLogin);
 
-    if (userLogin) {
-      const isMatch = await bcrypt.compare(password, userLogin.password);
+    const isMatch = await bcrypt.compare(password, userLogin.password); //for comparing the user entered password with the stored encrypted password
+    
+    console.log("accountNumber: ", accountNumber);
+    console.log("user acc ", (userLogin.accountNumber));
 
-      // //using cookies.
+    if (!isMatch) {
+      res.status(400).json({ error: "Invalid credentials1" });
+
+    } else if (userLogin.accountNumber != accountNumber) {
+      res.status(400).json({ error: "Invalid credentials3" });
+    } 
+    else {
+      //generating JWT token while user login
       const token = await userLogin.generateAuthToken();
+      // console.log(token)
 
-      console.log(token);
-      res.cookie("jwt", token, {
-        expires: new Date(Date.now() + 25892000000),
-        httpOnly: true,
-      });
+      // res.cookie("jwt", token, {
+      //   expires: new Date(Date.now() + 25892000000),
+      //   httpOnly: true,
+      // });
 
-      // res.cookie("jwt", token);
+      fs.writeFile("token.txt", token, function(err){
+        if (err) throw err;
 
-      // console.log(cookie);
+        console.log("Token saved.");
 
-      // console.log(token);
-      if (isMatch) {
-        if (userLogin.accountNumber == accountNumber) {
-          res.json({ message: "User is logged in successfully." });
-        } else {
-          // res.json({error: "invalid acc"});
-        }
-      } else {
-        res.json({ error: "Invalid credentials." });
-      }
+      })
+      res.json({ message: "user Login Successfully" });
     }
   } catch (err) {
     console.log(err);
   }
-
-  // res.send();
 });
+
+// res.send();
 
 // router.get("/balance", Authenticate, async (req, res)=>{
 //   res.json({message: "in balance get route"});
 // })
 
 // // check bank balance (post route)
-router.post("/balance", async (req, res) => {
+router.post("/balance", Authenticate, async (req, res) => {
   try {
     const { email, pin } = req.body;
     console.log("phase 1");
@@ -285,46 +297,51 @@ router.post("/deposit", async (req, res) => {
 // transfer
 router.post("/transfer", async (req, res) => {
   try {
-    const { email, pin, accountNumber, amount } = req.body;
-
-    if (!email || !pin || !accountNumber || !amount) {
+    // const { email, pin, recEmail, amount } = req.body;
+    const { email, pin, recEmail, accountNumber, amount } = req.body;
+    if (!email || !pin || !recEmail || !accountNumber || !amount) {
       return res.json({ error: "Invalid credentials" });
     }
 
     const currentUser = await User.findOne({ email: email });
 
-    const userToTransfer = User.findOne({ accountNumber: accountNumber });
+    // const userToTransfer = await User.findOne({ email: recEmail });
+    const userToTransfer = await User.findOne({ accountNumber: accountNumber });
+
     // console.log(currentUser);
-    console.log("#######################");
-    console.log(userToTransfer.name);
+    // console.log("#######################");
+    // console.log(userToTransfer);
 
-  //   if (!currentUser && !userToTransfer) {
-  //     return res.json({ error: "user doesn't exist." });
-  //   }
+    if (!currentUser && !userToTransfer) {
+      return res.json({ error: "user doesn't exist." });
+    }
 
-  //   if (currentUser.bankBalance > amount) {
-  //     const updatedCurrentUser = await User.updateOne(
-  //       { email: email },
-  //       {
-  //         $set: {
-  //           bankBalance: currentUser.bankBalance - amount,
-  //         },
-  //       }
-  //     );
-  //     // console.log(updatedCurrentUser);
-  //       console.log("phase 1");
+    console.log("phase 1");
+    if (currentUser.bankBalance > amount) {
+      const updatedCurrentUser = await User.updateOne(
+        { email: email },
+        {
+          $set: {
+            bankBalance: currentUser.bankBalance - amount,
+          },
+        }
+      );
+      // console.log(updatedCurrentUser);
+      console.log("phase 2");
 
-  //     const updatedNewUser = await User.updateOne(
-  //       { accountNumber: userToTransfer.accountNumber },
-  //       {
-  //         $set: {
-  //           bankBalance: userToTransfer.bankBalance + amount,
-  //         },
-  //       }
-  //     );
-  //     console.log("phase 2");
-  //     return res.json({message: "transaction successful."});
-    // }
+      const updatedNewUser = await User.updateOne(
+        { accountNumber: userToTransfer.accountNumber },
+        {
+          $set: {
+            bankBalance: userToTransfer.bankBalance + amount,
+          },
+        }
+      );
+      console.log("phase 3");
+      return res.json({
+        message: `transaction is successful, and Rs. ${amount} is transfered.`,
+      });
+    }
   } catch (err) {
     console.log(err);
   }
@@ -350,6 +367,14 @@ router.post("/delete", async (req, res) => {
   } catch (err) {
     console.log(err);
   }
+});
+
+// testing
+
+router.post("/testing", (req, res) => {
+  console.log(req.body)
+  console.log("phase 1");
+  res.send(req.body)
 });
 
 module.exports = router;
@@ -465,3 +490,28 @@ module.exports = router;
 
 // }
 // );
+
+// gvhadsijfksdfcjksd
+
+// if (userLogin) {
+//   const isMatch = await bcrypt.compare(password, userLogin.password);
+
+//   // //using cookies.
+
+//   // res.cookie("jwt", token);
+
+//   // console.log(cookie);
+
+//   // console.log(token);
+//   if (isMatch) {
+//     if (userLogin.accountNumber == accountNumber) {
+//       const token = await userLogin.generateAuthToken();
+
+//       console.log(token);
+//       res.cookie("jwt", token, {
+//         expires: new Date(Date.now() + 25892000000),
+//         httpOnly: true,
+//       });
+//     } else {
+//       res.json({ error: "invalid acc" });
+//     }

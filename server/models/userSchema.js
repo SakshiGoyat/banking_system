@@ -8,11 +8,6 @@ const jwt = require("jsonwebtoken");
 
 const nolookalikesRndString = nolookalikes(10);
 
-//calculating number of years since 1970
-const minute = 1000 * 60;
-const hour = minute * 60;
-const day = hour * 24;
-const year = day * 365;
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -62,15 +57,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  address: {
-    city: {
-      type: String,
-      required: true,
-    },
-    state: {
-      type: String,
-      required: true,
-    },
+  // address: {
+  //   city: {
+  //     type: String,
+  //     required: true,
+  //   },
+  //   state: {
+  //     type: String,
+  //     required: true,
+  //   },
+  // },
+  address:{
+    type: String,
+    required: true
   },
   accountNumber: {
     type: String,
@@ -82,12 +81,14 @@ const userSchema = new mongoose.Schema({
   openingDate: {
     type: String,
     required: true,
-    default: Date.now() / year,
+    // default: Date.now() / year,
+    default: Date
   },
   expiryDate: {
     type: String,
     required: true,
-    default: Date.now() / year + 5,
+    default: Date().year + 5,
+    // default: Date
   },
   pin: {
     type: String,
@@ -105,6 +106,8 @@ const userSchema = new mongoose.Schema({
     type: Number,
   },
 });
+
+
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
@@ -139,5 +142,4 @@ userSchema.methods.generateAuthToken = async function () {
   }
 };
 const User = mongoose.model("users", userSchema);
-
 module.exports = User;

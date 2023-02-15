@@ -20,8 +20,6 @@ const user = require("./models/userSchema");
 //mongoose setup
 // mongoose.connect("mongodb://localhost:27017/bankDB");
 
-// creating database
-// const db = mongoose.connect("mongodb://localhost:27017/bankDB");
 
 // current date function
 // function date() {

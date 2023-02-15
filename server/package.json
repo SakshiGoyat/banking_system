@@ -7,6 +7,7 @@
     "dotenv": "^16.0.3",
     "email-validator": "^2.0.4",
     "express": "^4.18.2",
+    "fs": "^0.0.1-security",
     "inquirer": "^8.2.5",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.0",
@@ -19,7 +20,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "register": "node commander.js register",
+    "login": "node commander.js login"
+
   },
   "keywords": [],
   "author": "",

@@ -1,13 +1,21 @@
 const jwt = require("jsonwebtoken");
 const userSchema = require("../models/userSchema");
-
+const fs = require("fs");
 const Authenticate = async (req, res, next) => {
   try {
-    // console.log("hello");
-    const token = req.cookies.jwt;
-    // console.log("hello");
+    console.log("phase 1");
+    var token;
+
+    fs.readFile("token.txt", function(err, data){
+      if(err) throw err;
+
+      token = data;
+      console.log(token);
+    })
+    console.log("phase 2");
     const verifyUser = await jwt.verify(token, process.env.SECRET_KEY);
     console.log(verifyUser);
+    
     const authuser = await userSchema.findOne({
       _id: verifyUser._id,
       "tokens.token": token,
