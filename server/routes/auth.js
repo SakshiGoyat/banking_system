@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Evalidator = require("email-validator");
 const Avalidator = require("aadhaar-validator");
-const Authenticate = require("../middleware/authenicate");
+const Authenticate = require("../middleware/authenticate");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
-
+var senderAccountNumber = fs.readFileSync("accountNumber.txt", "utf8");
+// console.log(senderAccountNumber);
 // const nolookalikes = require("nanoid-generate/nolookalikes");
 
 // importing databases.
@@ -16,6 +17,8 @@ require("../db/conn");
 
 //importing schema
 const User = require("../models/userSchema");
+const Transaction = require("../models/transaction");
+
 // console.log(User);
 // const { findOne } = require("../models/userSchema");
 
@@ -113,10 +116,14 @@ router.post("/register", async (req, res) => {
 
     if (userRegister) {
       res.status(201).json({ message: "user registered successfully" });
-      fs.writeFile("accountNumber.txt", userRegister.accountNumber, function (err) {
-        if (err) throw err;
-        console.log("Saved!");
-      });
+      fs.writeFile(
+        "accountNumber.txt",
+        userRegister.accountNumber,
+        function (err) {
+          if (err) throw err;
+          console.log("Saved!");
+        }
+      );
     } else {
       res.status(404).json({ message: "user is not registered successfully" });
     }
@@ -144,17 +151,15 @@ router.post("/login", async (req, res) => {
     console.log(userLogin);
 
     const isMatch = await bcrypt.compare(password, userLogin.password); //for comparing the user entered password with the stored encrypted password
-    
+
     console.log("accountNumber: ", accountNumber);
-    console.log("user acc ", (userLogin.accountNumber));
+    console.log("user acc ", userLogin.accountNumber);
 
     if (!isMatch) {
       res.status(400).json({ error: "Invalid credentials1" });
-
     } else if (userLogin.accountNumber != accountNumber) {
       res.status(400).json({ error: "Invalid credentials3" });
-    } 
-    else {
+    } else {
       //generating JWT token while user login
       const token = await userLogin.generateAuthToken();
       // console.log(token)
@@ -164,12 +169,11 @@ router.post("/login", async (req, res) => {
       //   httpOnly: true,
       // });
 
-      fs.writeFile("token.txt", token, function(err){
+      fs.writeFile("token.txt", token, function (err) {
         if (err) throw err;
-
+        console.log(token);
         console.log("Token saved.");
-
-      })
+      });
       res.json({ message: "user Login Successfully" });
     }
   } catch (err) {
@@ -184,32 +188,34 @@ router.post("/login", async (req, res) => {
 // })
 
 // // check bank balance (post route)
-router.post("/balance", Authenticate, async (req, res) => {
+router.get("/balance", Authenticate, async (req, res) => {
   try {
-    const { email, pin } = req.body;
-    console.log("phase 1");
-    // const {pin} = req.body;
-    if (!email || !pin) {
-      return res.json({ error: "invalid credentials" });
-    }
-    console.log("phase 2");
-    const userExist = await User.findOne({ email: email });
+    // const { email, pin } = req.body;
+    // console.log("phase 1");
+    // // const {pin} = req.body;
+    // if (!email || !pin) {
+    //   return res.json({ error: "invalid credentials" });
+    // }
+    // console.log("phase 2");
+    // const userExist = await User.findOne({ email: email });
 
-    if (!pin) {
-      return res.json({ error: "invalid credentials" });
-    }
-    console.log("phase 3");
-    // console.log(userExist);
-    if (userExist) {
-      const ifMatch = await bcrypt.compare(pin, userExist.pin);
+    // if (!pin) {
+    //   return res.json({ error: "invalid credentials" });
+    // }
+    // console.log("phase 3");
+    // // console.log(userExist);
+    // if (userExist) {
+    //   const ifMatch = await bcrypt.compare(pin, userExist.pin);
 
-      console.log("phase 4");
-      console.log(ifMatch);
-      if (ifMatch) {
-        return res.json({ message: `${userExist.bankBalance}` });
-      }
-      console.log("phase 5");
-    }
+    //   console.log("phase 4");
+    //   console.log(ifMatch);
+    //   if (ifMatch) {
+    return res.json({
+      message: `your bank balance is ${req.authuser.bankBalance}`,
+    });
+    //   }
+    //   console.log("phase 5");
+    // }
   } catch (err) {
     console.log(err);
   }
@@ -231,29 +237,59 @@ router.post("/balance", Authenticate, async (req, res) => {
 // });
 
 // check withdrawal money
-router.post("/withdrawal", async (req, res) => {
+router.post("/withdrawal", Authenticate, async (req, res) => {
   try {
-    const { email, pin, amount } = req.body;
+    // const { email, pin, amount } = req.body;
+    const { pin, amount } = req.body;
 
-    if (!email || !pin || !amount) {
+    // if (!email || !pin || !amount) {
+    if (!pin || !amount) {
       return res.json({ error: "invalid credentials" });
     }
-    const userExist = await User.findOne({ email: email });
-
+    console.log("phase 1");
+    const userExist = await User.findOne({ email: req.authuser.email });
+    // console.log(userExist.email);
+    // console.log(req.authuser.email);
     if (userExist) {
       const ifMatch = await bcrypt.compare(pin, userExist.pin);
-
+      console.log("phase 2");
+      // console.log(userExist.bankBalance);
       if (ifMatch) {
+        console.log("phase 3");
         if (amount < userExist.bankBalance) {
-          res.json({ message: "transaction successful." });
+          res.json({
+            message: `transaction successful and ${amount} is withdrawaled.`,
+          });
           const updated = await User.updateOne(
-            { email: email },
+            { email: userExist.email },
             {
               $set: {
                 bankBalance: userExist.bankBalance - amount,
               },
             }
           );
+          // storing data in transaction schema
+          const senderName = userExist.name;
+          const senderEmail = userExist.email;
+          const senderAccountNo = senderAccountNumber;
+          const recieverName = null;
+          const recieverEmail = null;
+          const recieverAccountNo = null;
+          const transactionType = "withdraw";
+
+          const transaction = new Transaction({
+            senderName,
+            senderAccountNo,
+            senderEmail,
+            recieverName,
+            recieverEmail,
+            recieverAccountNo,
+            amount,
+            transactionType,
+          });
+
+          const transactionSave = await transaction.save();
+          console.log("Transaction save ", transactionSave);
           return console.log(userExist.bankBalance);
         }
       }
@@ -264,28 +300,52 @@ router.post("/withdrawal", async (req, res) => {
 });
 
 // deposit
-router.post("/deposit", async (req, res) => {
+router.post("/deposit", Authenticate, async (req, res) => {
   try {
-    const { email, pin, amount } = req.body;
-
-    if (!email || !pin || !amount) {
+    // const { email, pin, amount } = req.body;
+    const { pin, amount } = req.body;
+    // console.log(amount);
+    // if (!email || !pin || !amount) {
+    if (!pin || !amount) {
       return res.json({ error: "invalid credentials" });
     }
-    const userExist = await User.findOne({ email: email });
+    const userExist = await User.findOne({ email: req.authuser.email });
 
     if (userExist) {
       const ifMatch = await bcrypt.compare(pin, userExist.pin);
-
+      console.log(userExist.email);
       if (ifMatch) {
-        res.json({ message: "transaction successful." });
+        res.json({ message: `transaction successful and ${amount}` });
         const updated = await User.updateOne(
-          { email: email },
+          { email: userExist.email },
           {
             $set: {
-              bankBalance: userExist.bankBalance + amount,
+              bankBalance: Number(userExist.bankBalance) + Number(amount),
             },
           }
         );
+        //storing in transaction schema
+          const senderName = userExist.name;
+          const senderEmail = userExist.email;
+          const senderAccountNo = senderAccountNumber;
+          const recieverEmail = null;
+          const recieverName = null;
+          const recieverAccountNo = null;
+          const transactionType = "deposit";
+
+          const transaction = new Transaction({
+            senderName,
+            senderEmail,
+            senderAccountNo,
+            recieverEmail,
+            recieverName,
+            recieverAccountNo,
+            amount,
+            transactionType,
+          });
+          const transactionSave = await transaction.save();
+          console.log("Transaction save ", transactionSave);
+
         return console.log(userExist.bankBalance);
       }
     }
@@ -295,15 +355,18 @@ router.post("/deposit", async (req, res) => {
 });
 
 // transfer
-router.post("/transfer", async (req, res) => {
+router.post("/transfer", Authenticate, async (req, res) => {
   try {
     // const { email, pin, recEmail, amount } = req.body;
-    const { email, pin, recEmail, accountNumber, amount } = req.body;
-    if (!email || !pin || !recEmail || !accountNumber || !amount) {
-      return res.json({ error: "Invalid credentials" });
-    }
+    // const { email, pin, recEmail, accountNumber, amount } = req.body;
+    const { pin, accountNumber, amount } = req.body;
 
-    const currentUser = await User.findOne({ email: email });
+    // if (!email || !pin || !recEmail || !accountNumber || !amount) {
+          if (!pin || !accountNumber || !amount) {
+            return res.json({ error: "Invalid credentials" });
+          }
+
+    const currentUser = await User.findOne({ email: req.authuser.email });
 
     // const userToTransfer = await User.findOne({ email: recEmail });
     const userToTransfer = await User.findOne({ accountNumber: accountNumber });
@@ -319,7 +382,7 @@ router.post("/transfer", async (req, res) => {
     console.log("phase 1");
     if (currentUser.bankBalance > amount) {
       const updatedCurrentUser = await User.updateOne(
-        { email: email },
+        { email: currentUser.email },
         {
           $set: {
             bankBalance: currentUser.bankBalance - amount,
@@ -333,11 +396,31 @@ router.post("/transfer", async (req, res) => {
         { accountNumber: userToTransfer.accountNumber },
         {
           $set: {
-            bankBalance: userToTransfer.bankBalance + amount,
+            bankBalance: Number(userToTransfer.bankBalance) + Number(amount),
           },
         }
       );
       console.log("phase 3");
+          const senderName = currentUser.name;
+          const senderEmail = currentUser.email;
+          const senderAccountNo = senderAccountNumber;
+          const recieverName = userToTransfer.name;
+          const recieverEmail = userToTransfer.email;
+          const recieverAccountNo = userToTransfer.accountNumber;
+          const transactionType = "transfer";
+
+          const transaction = new Transaction({
+            senderName,
+            senderEmail,
+            senderAccountNo,
+            recieverName,
+            recieverEmail,
+            recieverAccountNo,
+            amount,
+            transactionType,
+          });
+      const transactionSave = await transaction.save();
+      console.log("Transaction save ", transactionSave);
       return res.json({
         message: `transaction is successful, and Rs. ${amount} is transfered.`,
       });
@@ -347,6 +430,15 @@ router.post("/transfer", async (req, res) => {
   }
 });
 
+// history
+
+router.post("/history", Authenticate, async (req, res)=>{
+  try{
+    
+  }catch(err){
+    console.log(err);
+  }
+})
 // deletion
 router.post("/delete", async (req, res) => {
   try {
@@ -372,9 +464,9 @@ router.post("/delete", async (req, res) => {
 // testing
 
 router.post("/testing", (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
   console.log("phase 1");
-  res.send(req.body)
+  res.send(req.body);
 });
 
 module.exports = router;

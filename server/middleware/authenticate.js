@@ -1,20 +1,13 @@
 const jwt = require("jsonwebtoken");
 const userSchema = require("../models/userSchema");
 const fs = require("fs");
+var token = fs.readFileSync("token.txt", "utf8");
+// console.log(token);
+
 const Authenticate = async (req, res, next) => {
   try {
-    console.log("phase 1");
-    var token;
-
-    fs.readFile("token.txt", function(err, data){
-      if(err) throw err;
-
-      token = data;
-      console.log(token);
-    })
-    console.log("phase 2");
     const verifyUser = await jwt.verify(token, process.env.SECRET_KEY);
-    console.log(verifyUser);
+    // console.log(verifyUser);
     
     const authuser = await userSchema.findOne({
       _id: verifyUser._id,
@@ -27,7 +20,7 @@ const Authenticate = async (req, res, next) => {
     req.authuser = authuser;
     req.userID = authuser._id;
 
-    console.log(authuser);
+    // console.log(authuser);
 
     next();
   } catch (err) {

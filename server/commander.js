@@ -81,25 +81,25 @@ const loginQues = [
   },
 ];
 
-const balanceQues = [
-  {
-    type: "input",
-    name: "email",
-    message: "Enter your email: ",
-  },
-  {
-    type: "input",
-    name: "pin",
-    message: "Enter your pin: ",
-  }
-]
+// const balanceQues = [
+//   {
+//     type: "input",
+//     name: "email",
+//     message: "Enter your email: ",
+//   },
+//   {
+//     type: "input",
+//     name: "pin",
+//     message: "Enter your pin: ",
+//   }
+// ]
 
 const withdrawalQues = [
-  {
-    type: "input",
-    name: "email",
-    message: "Enter your email: ",
-  },
+  // {
+  //   type: "input",
+  //   name: "email",
+  //   message: "Enter your email: ",
+  // },
   {
     type: "input",
     name: "pin",
@@ -113,11 +113,11 @@ const withdrawalQues = [
 ];
 
 const depositQues = [
-  {
-    type: "input",
-    name: "email",
-    message: "Enter your email: ",
-  },
+  // {
+  //   type: "input",
+  //   name: "email",
+  //   message: "Enter your email: ",
+  // },
   {
     type: "input",
     name: "pin",
@@ -126,25 +126,25 @@ const depositQues = [
   {
     type: "input",
     name: "amount",
-    message: "Enter the amount you want to desposit: ",
+    message: "Enter the amount you want to deposit: ",
   },
 ];
 const transferQues = [
-  {
-    type: "input",
-    name: "email",
-    message: "Enter your email: ",
-  },
+  // {
+  //   type: "input",
+  //   name: "email",
+  //   message: "Enter your email: ",
+  // },
   {
     type: "input",
     name: "pin",
     message: "Enter your pin: ",
   },
-  {
-    type: "input",
-    name: "recEmail",
-    message: "Enter reciever email: ",
-  },
+  // {
+  //   type: "input",
+  //   name: "recEmail",
+  //   message: "Enter reciever email: ",
+  // },
   {
     type: "input",
     name: "accountNumber",
@@ -204,11 +204,11 @@ async function loginRequest(answers){
 }
 
 // balance axios
-async function balanceRequest(answers) {
+async function balanceRequest() {
   const config = {
-    method: "post",
+    method: "get",
     url: "http://localhost:5000/balance",
-    data: answers,
+    // data: answers,
   };
 
   let res = await axios(config);
@@ -216,6 +216,18 @@ async function balanceRequest(answers) {
   console.log(res.data);
 }
 
+//history
+async function historyRequest() {
+  const config = {
+    method: "get",
+    url: "http://localhost:5000/history",
+    // data: answers,
+  };
+
+  let res = await axios(config);
+
+  console.log(res.data);
+}
 // withdrawal axios
 async function withdrawalRequest(answers) {
   const config = {
@@ -294,9 +306,10 @@ program
   .alias("b")
   .description("balance is printed.")
   .action((_id) => {
-    inquirer.prompt(balanceQues).then((answers) => {
-      balanceRequest(answers);
-    });
+    // inquirer.prompt(balanceQues).then((answers) => {
+      // balanceRequest(answers);
+      balanceRequest();
+    // });
   });
 
 // withdrawal command
@@ -332,6 +345,17 @@ program
     });
   });
 
+// history
+program
+  .command("balance")
+  .alias("b")
+  .description("balance is printed.")
+  .action((_id) => {
+    // inquirer.prompt(balanceQues).then((answers) => {
+    // balanceRequest(answers);
+    historyRequest();
+    // });
+  });
   // delete
 program
   .command("delete")
