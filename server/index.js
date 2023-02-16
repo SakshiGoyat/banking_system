@@ -1,5 +1,5 @@
 const express = require("express");
-const nolookalikes = require("nanoid-generate/nolookalikes");
+// const nolookalikes = require("nanoid-generate/nolookalikes");
 // const dotenv = require('dotenv');
 // const mongoose = require("mongoose");
 require("./db/conn");
@@ -8,7 +8,16 @@ const app = express();
 const Port = process.env.Port || 5000;
 
 app.use(require("./routes/auth"));
-const user = require("./models/userSchema");
+// const user = require("./models/userSchema");
+
+// local port
+app.listen(Port, () => {
+  console.log(`listening to port ${Port}`);
+});
+
+
+
+
 
 // generating a random string
 
@@ -53,8 +62,3 @@ const user = require("./models/userSchema");
 // creating collections
 // const User = require("./models/users");
 // const Transaction = require("./models/transactions");
-
-// local port
-app.listen(Port, () => {
-  console.log(`listening to port ${Port}`);
-});

@@ -130,6 +130,26 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// userSchema.post("updateOne", async function (next) {
+//   // if (this.isModified("password")) {
+//   //   // console.log("hi from bcrypt");
+//   //   let newPassword = this.password.toString();
+//   //   this.password = await bcrypt.hash(newPassword, 12);
+//   //   let newCpassword = this.cPassword.toString();
+//   //   this.cPassword = await bcrypt.hash(newCpassword, 12);
+//   // }
+
+//   if (this.isModified("pin")) {
+//     let newpin = this.pin.toString();
+//     this.pin = await bcrypt.hash(newpin, 10);
+//   }
+
+//   // if (this.isModified("phoneNo")) {
+//   //   let newPhone = this.PhoneNo.toString();
+//   //   this.PhoneNo = await bcrypt.hash(newPhone, 10);
+//   // }
+//   next();
+// });
 userSchema.methods.generateAuthToken = async function () {
   try {
     // console.log(process.env.SECRET_KEY);
