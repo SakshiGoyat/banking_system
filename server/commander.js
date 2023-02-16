@@ -9,7 +9,7 @@ const withdrawAxios = require("./axios/withdrawA");
 const depositAxios = require("./axios/depositA");
 const transferAxios = require("./axios/transferA");
 const pinAxios = require("./axios/pinA");
-const historyAxios = require("./axios/registerA");
+const historyAxios = require("./axios/historyA");
 const deleteAxios = require("./axios/deleteA");
 
 // register command
