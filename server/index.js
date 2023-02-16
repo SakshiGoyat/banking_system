@@ -54,31 +54,6 @@ const user = require("./models/userSchema");
 // const User = require("./models/users");
 // const Transaction = require("./models/transactions");
 
-// middle ware 
-const middleware = (req, res, next) =>{
-  console.log(`Hello my middleware`);
-  next();
-}
-
-
-app.get("/", middleware, (req, res)=>{
-  res.send("Hello World!!!");
-});
-
-app.get("/signUp", (req, res) => {
-  //Print passbook
-});
-
-app.post("/signUp", (req, res) => {
-  // sign up
-});
-
-app.get("/signIn", (req, res) => {
-  // print user data
-});
-
-app.post("/signIn", (req, res) => {});
-
 // local port
 app.listen(Port, () => {
   console.log(`listening to port ${Port}`);

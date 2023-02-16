@@ -9,7 +9,7 @@ const registerQues = [
   {
     type: "input",
     name: "name",
-    message: "Enter your first name: ",
+    message: "Enter your name: ",
   },
   {
     type: "input",
@@ -156,6 +156,24 @@ const transferQues = [
     message: "Enter the amount you want to transfer: ",
   },
 ];
+
+const pinQues = [
+  {
+    type: "input",
+    name: "accountNumber",
+    message: "Enter your Account Number: ",
+  },
+  {
+    type: "input",
+    name: "pin",
+    message: "Enter your previous pin: ",
+  },
+  {
+    type: "input",
+    name: "newPin",
+    message: "Enter your new pin: ",
+  },
+];
 const deleteQues = [
   {
     type: "input",
@@ -203,6 +221,19 @@ async function loginRequest(answers){
   console.log(res.data);
 }
 
+//update pin axios
+async function pinRequest(answers) {
+  const config = {
+    method: "post",
+    url: "http://localhost:5000/pin",
+    data: answers,
+  };
+
+  let res = await axios(config);
+
+  console.log(res.data);
+}
+
 // balance axios
 async function balanceRequest() {
   const config = {
@@ -216,18 +247,6 @@ async function balanceRequest() {
   console.log(res.data);
 }
 
-//history
-async function historyRequest() {
-  const config = {
-    method: "get",
-    url: "http://localhost:5000/history",
-    // data: answers,
-  };
-
-  let res = await axios(config);
-
-  console.log(res.data);
-}
 // withdrawal axios
 async function withdrawalRequest(answers) {
   const config = {
@@ -276,6 +295,19 @@ async function deleteRequest(answers) {
 
   console.log(res.data);
 }
+
+//history
+async function historyRequest() {
+  const config = {
+    method: "get",
+    url: "http://localhost:5000/history",
+    // data: answers,
+  };
+
+  let res = await axios(config);
+
+  console.log(res.data);
+}
 // register command
 program
   .command("register")
@@ -300,6 +332,17 @@ program
 });
   });
 
+// update pin
+
+program
+  .command("pin")
+  .alias("p")
+  .description("pin has been updated.")
+  .action(() => {
+    inquirer.prompt(pinQues).then((answers) => {
+      pinRequest(answers);
+    });
+  });
 // check balance command
 program
   .command("balance")
@@ -347,9 +390,9 @@ program
 
 // history
 program
-  .command("balance")
-  .alias("b")
-  .description("balance is printed.")
+  .command("history")
+  .alias("h")
+  .description("history is printed.")
   .action((_id) => {
     // inquirer.prompt(balanceQues).then((answers) => {
     // balanceRequest(answers);

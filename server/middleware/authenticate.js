@@ -2,7 +2,8 @@ const jwt = require("jsonwebtoken");
 const userSchema = require("../models/userSchema");
 const fs = require("fs");
 var token = fs.readFileSync("token.txt", "utf8");
-// console.log(token);
+console.log(token);
+console.log("Hello from authenticate.");
 
 const Authenticate = async (req, res, next) => {
   try {
