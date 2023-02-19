@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 module.exports = async (req, res) => {
   try {
     // const { email, pin, amount } = req.body;
-    const { pin, amount } = req.body;
+    const { pin, amount } = req.body.data;
     // console.log(amount);
     // if (!email || !pin || !amount) {
     if (!pin || !amount) {

@@ -1,16 +1,17 @@
-const inquirer = require("inquirer");
+// const inquirer = require("inquirer");
 const axios = require("axios");
+const retrieveUserToken = require("../utility/retrieveUserToken");
 
 module.exports = () => {
-
-//balance axios
+  //balance axios
   async function balanceRequest() {
-    const config = {
-      method: "get",
-      url: "http://localhost:5000/balance",
-    };
+    const userToken = retrieveUserToken();
 
-    let res = await axios(config);
+    let res = await axios.get("http://localhost:5000/balance", {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
 
     console.log(res.data);
   }

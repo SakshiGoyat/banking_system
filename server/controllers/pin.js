@@ -2,12 +2,12 @@ const bcrypt = require("bcrypt");
 const User = require("../models/userSchema");
 
 module.exports = async (req, res) => {
-  const { accountNumber, pin, newPin } = req.body;
+  const { accountNumber, pin, newPin } = req.body.data;
 
   if (!accountNumber || !pin || !newPin) {
-    return res.json({ error: "Invalid credentials." });
+    return res.json({ error: "Invalid credentials1." });
   } else if (accountNumber != req.authuser.accountNumber) {
-    return res.json({ error: "Invalid acc credentials." });
+    return res.json({ error: "Invalid acc credentials2." });
   }
   // else {
   //   console.log(req.authuser.email);

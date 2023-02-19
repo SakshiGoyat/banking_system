@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const axios = require("axios");
+const retrieveUserToken = require("../utility/retrieveUserToken");
 
 module.exports = function(){
 
@@ -11,7 +12,7 @@ module.exports = function(){
     //   message: "Enter your email: ",
     // },
     {
-      type: "input",
+      type: "password",
       name: "pin",
       message: "Enter your pin: ",
     },
@@ -24,13 +25,19 @@ module.exports = function(){
 
   // withdrawal axios
   async function withdrawalRequest(answers) {
-    const config = {
-      method: "post",
-      url: "http://localhost:5000/withdrawal",
-      data: answers,
-    };
+    const userToken = retrieveUserToken();
 
-    let res = await axios(config);
+    let res = await axios.post(
+      "http://localhost:5000/withdrawal",
+      {
+        data: answers,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
 
     console.log(res.data);
   }

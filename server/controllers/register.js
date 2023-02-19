@@ -1,6 +1,7 @@
 const Evalidator = require("email-validator");
 const Avalidator = require("aadhaar-validator");
 const User = require("../models/userSchema");
+
 const fs = require("fs");
 
 module.exports = async (req, res) => {
@@ -97,6 +98,6 @@ module.exports = async (req, res) => {
       res.status(404).json({ message: "user is not registered successfully" });
     }
   } catch (err) {
-    console.log(err);
+    console.log(err.data);
   }
 };

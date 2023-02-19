@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const axios = require("axios");
+const fs = require("fs");
 
 module.exports = function () {
   //Question
@@ -10,7 +11,7 @@ module.exports = function () {
       message: "Enter your Email: ",
     },
     {
-      type: "input",
+      type: "password",
       name: "password",
       message: "Enter your Password: ",
     },
@@ -30,7 +31,9 @@ module.exports = function () {
     };
 
     let res = await axios(config);
-
+    fs.writeFile("token.txt", res.data.token, function (err) {
+      if (err) throw err;
+    });
     console.log(res.data);
   }
 

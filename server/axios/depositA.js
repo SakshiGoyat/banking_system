@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const axios = require("axios");
+const retrieveUserToken = require("../utility/retrieveUserToken");
 
 module.exports = function () {
   //Questions
@@ -10,7 +11,7 @@ module.exports = function () {
     //   message: "Enter your email: ",
     // },
     {
-      type: "input",
+      type: "password",
       name: "pin",
       message: "Enter your pin: ",
     },
@@ -23,18 +24,30 @@ module.exports = function () {
 
   // deposit axios
   async function depositRequest(answers) {
-    const config = {
-      method: "post",
-      url: "http://localhost:5000/deposit",
-      data: answers,
-    };
-    let res = await axios(config);
+    // const config = {
+    //   method: "post",
+    //   url: "http://localhost:5000/deposit",
+    //   data: answers,
+    // };
+    const userToken = retrieveUserToken();
+
+    let res = await axios.post(
+      "http://localhost:5000/deposit",
+      {
+        data: answers,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
 
     console.log(res.data);
   }
 
   //inquirer
-      inquirer.prompt(depositQues).then((answers) => {
-        depositRequest(answers);
-      });
+  inquirer.prompt(depositQues).then((answers) => {
+    depositRequest(answers);
+  });
 };

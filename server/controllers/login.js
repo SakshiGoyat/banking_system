@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userSchema");
-const fs = require("fs");
+// const fs = require("fs");
 
 module.exports = async (req, res) => {
   try {
@@ -34,12 +34,7 @@ module.exports = async (req, res) => {
       //   httpOnly: true,
       // });
 
-      fs.writeFile("token.txt", token, function (err) {
-        if (err) throw err;
-        console.log(token);
-        console.log("Token saved.");
-      });
-      res.json({ message: "user Login Successfully" });
+      res.json({ message: "user Login Successfully", token });
     }
   } catch (err) {
     console.log(err);

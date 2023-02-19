@@ -105,7 +105,8 @@ const userSchema = new mongoose.Schema({
   bankBalance: {
     type: Number,
   },
-});
+},
+);
 
 
 
@@ -130,7 +131,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// userSchema.post("updateOne", async function (next) {
+// userSchema.pre("updateOne", async function (next) {
 //   // if (this.isModified("password")) {
 //   //   // console.log("hi from bcrypt");
 //   //   let newPassword = this.password.toString();

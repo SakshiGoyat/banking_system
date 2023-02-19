@@ -15,12 +15,12 @@ module.exports = function () {
       message: "Enter your email ID: ",
     },
     {
-      type: "input",
+      type: "password",
       name: "password",
       message: "Enter your password: ",
     },
     {
-      type: "input",
+      type: "password",
       name: "cPassword",
       message: "Enter your confirm password: ",
     },
@@ -45,7 +45,7 @@ module.exports = function () {
       message: "Enter your Father's name: ",
     },
     {
-      type: "input",
+      type: "password",
       name: "pin",
       message: "Enter your pin: ",
     },

@@ -7,7 +7,7 @@ module.exports = async (req, res) => {
   try {
     // const { email, pin, recEmail, amount } = req.body;
     // const { email, pin, recEmail, accountNumber, amount } = req.body;
-    const { pin, accountNumber, amount } = req.body;
+    const { pin, accountNumber, amount } = req.body.data;
 
     // if (!email || !pin || !recEmail || !accountNumber || !amount) {
     if (!pin || !accountNumber || !amount) {
@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
     // console.log("#######################");
     // console.log(userToTransfer);
 
-    if (!currentUser && !userToTransfer) {
+    if (!currentUser || !userToTransfer) {
       return res.json({ error: "user doesn't exist." });
     }
 
@@ -42,7 +42,7 @@ module.exports = async (req, res) => {
       console.log("phase 2");
 
       const updatedNewUser = await User.updateOne(
-        { accountNumber: userToTransfer.accountNumber },
+        { accountNumber: accountNumber },
         {
           $set: {
             bankBalance: Number(userToTransfer.bankBalance) + Number(amount),

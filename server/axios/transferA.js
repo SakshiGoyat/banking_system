@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const axios = require("axios");
+const retrieveUserToken = require("../utility/retrieveUserToken");
 
 module.exports = function () {
   //Questions
@@ -10,7 +11,7 @@ module.exports = function () {
     //   message: "Enter your email: ",
     // },
     {
-      type: "input",
+      type: "password",
       name: "pin",
       message: "Enter your pin: ",
     },
@@ -33,12 +34,19 @@ module.exports = function () {
 
   // transfer axios
   async function transferRequest(answers) {
-    const config = {
-      method: "post",
-      url: "http://localhost:5000/transfer",
-      data: answers,
-    };
-    let res = await axios(config);
+    const userToken = retrieveUserToken();
+
+    let res = await axios.post(
+      "http://localhost:5000/transfer",
+      {
+        data: answers,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
 
     console.log(res.data);
   }
