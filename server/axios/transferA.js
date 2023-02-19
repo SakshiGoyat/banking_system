@@ -23,12 +23,17 @@ module.exports = function () {
     {
       type: "input",
       name: "accountNumber",
-      message: "Enter account Number to whom you want to transfer the money : ",
+      message: "Enter reciever's account Number: ",
     },
     {
       type: "input",
       name: "amount",
-      message: "Enter the amount you want to transfer: ",
+      message: "Enter the amount: ",
+    },
+    {
+      type: "input",
+      name: "bankName",
+      message: "Enter the receiver's bank name (in lowercase only): ",
     },
   ];
 

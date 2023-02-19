@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const axios = require("axios");
+const fs = require("fs");
 
 module.exports = function () {
   // Questions
@@ -59,6 +60,11 @@ module.exports = function () {
       name: "bankBalance",
       message: "Enter your bank balance: ",
     },
+    {
+      type: "input",
+      name: "bankName",
+      message: "Enter your bank name: ",
+    },
   ];
 
   // register axios
@@ -70,8 +76,14 @@ module.exports = function () {
     };
 
     let res = await axios(config);
-
-    console.log(res.data);
+      fs.writeFile(
+        "accountNumber.txt",
+        res.data.accountNumber,
+        function (err) {
+          if (err) throw err;
+        }
+      );
+    console.log(res.data.message);
   }
 
   //inquirer

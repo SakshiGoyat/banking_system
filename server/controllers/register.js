@@ -1,8 +1,8 @@
 const Evalidator = require("email-validator");
 const Avalidator = require("aadhaar-validator");
 const User = require("../models/userSchema");
-
-const fs = require("fs");
+const nolookalikes = require("nanoid-generate/nolookalikes");
+// const fs = require("fs");
 
 module.exports = async (req, res) => {
   // storing the values into variables.
@@ -18,6 +18,7 @@ module.exports = async (req, res) => {
     pin,
     address,
     bankBalance,
+    bankName,
   } = req.body;
 
   // const { city, state } = address;
@@ -35,7 +36,9 @@ module.exports = async (req, res) => {
     // !state ||
     !address ||
     !pin ||
-    !bankBalance
+    !bankBalance ||
+    !bankName
+
   ) {
     return res.status(404).json({ error: "plz fill the fields properly." });
   }
@@ -65,7 +68,7 @@ module.exports = async (req, res) => {
       return res.status(404).json({ error: "email already exists." });
     }
 
-    // const accountNumber  = nolookalikes(10);
+    const accountNumber  = nolookalikes(10);
 
     // registering the user.
     const user = new User({
@@ -79,25 +82,19 @@ module.exports = async (req, res) => {
       FatherName,
       pin,
       address,
+      accountNumber,
       bankBalance,
+      bankName
     });
 
     const userRegister = await user.save();
 
     if (userRegister) {
-      res.status(201).json({ message: "user registered successfully" });
-      fs.writeFile(
-        "accountNumber.txt",
-        userRegister.accountNumber,
-        function (err) {
-          if (err) throw err;
-          console.log("Saved!");
-        }
-      );
+      res.status(201).json({ message: "user registered successfully", accountNumber });
     } else {
-      res.status(404).json({ message: "user is not registered successfully" });
+      res.status(404).json({ message: "user is not registered successfully"});
     }
   } catch (err) {
-    console.log(err.data);
+    console.log(err);
   }
 };

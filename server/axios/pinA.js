@@ -8,17 +8,17 @@ const pinQues = [
   {
     type: "input",
     name: "accountNumber",
-    message: "Enter account number: ",
+    message: "Enter Account Number: ",
   },
-  {
-    type: "password",
-    name: "pin",
-    message: "Enter current pin: ",
-  },
+  // {
+  //   type: "password",
+  //   name: "pin",
+  //   message: "Enter Current Pin: ",
+  // },
   {
     type: "password",
     name: "newPin",
-    message: "Enter new pin: ",
+    message: "Enter New Pin: ",
   },
 ];
 

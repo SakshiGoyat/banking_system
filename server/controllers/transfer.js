@@ -7,10 +7,10 @@ module.exports = async (req, res) => {
   try {
     // const { email, pin, recEmail, amount } = req.body;
     // const { email, pin, recEmail, accountNumber, amount } = req.body;
-    const { pin, accountNumber, amount } = req.body.data;
+    const { pin, accountNumber, amount, bankName } = req.body.data;
 
     // if (!email || !pin || !recEmail || !accountNumber || !amount) {
-    if (!pin || !accountNumber || !amount) {
+    if (!pin || !accountNumber || !amount || !bankName) {
       return res.json({ error: "Invalid credentials" });
     }
 
@@ -27,6 +27,10 @@ module.exports = async (req, res) => {
       return res.json({ error: "user doesn't exist." });
     }
 
+    if(userToTransfer.bankName != bankName){
+      return res.json({error: "user doesn't exist in bank."});
+    }
+    
     console.log("phase 1");
     console.log(req.authuser.email);
     if (currentUser.bankBalance > amount) {
