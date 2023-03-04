@@ -11,14 +11,20 @@ module.exports = async (req, res) => {
     email,
     password,
     cPassword,
+    age,
+    gender,
+    DOB,
     aadhaarCard,
     PANCard,
     PhoneNo,
     FatherName,
     pin,
-    address,
+    city,
+    state,
+    country,
     bankBalance,
     bankName,
+    accountType
   } = req.body;
 
   // const { city, state } = address;
@@ -28,17 +34,20 @@ module.exports = async (req, res) => {
     !email ||
     !password ||
     !cPassword ||
+    !age ||
+    !gender ||
+    !DOB ||
     !aadhaarCard ||
     !PANCard ||
     !PhoneNo ||
     !FatherName ||
-    // !city ||
-    // !state ||
-    !address ||
+    !city ||
+    !state ||
+    !country ||
     !pin ||
     !bankBalance ||
-    !bankName
-
+    !bankName ||
+    !accountType
   ) {
     return res.status(404).json({ error: "plz fill the fields properly." });
   }
@@ -69,13 +78,21 @@ module.exports = async (req, res) => {
     }
 
     const accountNumber  = nolookalikes(10);
-
+    const CIF = Math.floor(Math.random()*1000000000000);
+    let address = {
+      city: city,
+      state: state,
+      country: country
+    }
     // registering the user.
     const user = new User({
       name,
       email,
       password,
       cPassword,
+      age,
+      gender,
+      DOB,
       aadhaarCard,
       PANCard,
       PhoneNo,
@@ -84,13 +101,15 @@ module.exports = async (req, res) => {
       address,
       accountNumber,
       bankBalance,
-      bankName
+      bankName,
+      accountType,
+      CIF
     });
 
     const userRegister = await user.save();
 
     if (userRegister) {
-      res.status(201).json({ message: "user registered successfully", accountNumber });
+      res.status(201).json({ message: "user registered successfully", accountNumber, CIF });
     } else {
       res.status(404).json({ message: "user is not registered successfully"});
     }

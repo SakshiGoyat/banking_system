@@ -27,6 +27,21 @@ module.exports = function () {
     },
     {
       type: "input",
+      name: "age",
+      message: "Enter your Age: ",
+    },
+    {
+      type: "input",
+      name: "gender",
+      message: "Enter your gender: ",
+    },
+    {
+      type: "input",
+      name: "DOB",
+      message: "Enter your DOB(DD/MM/YYYY): ",
+    },
+    {
+      type: "input",
       name: "aadhaarCard",
       message: "Enter your Aadhar number: ",
     },
@@ -46,24 +61,39 @@ module.exports = function () {
       message: "Enter your Father's name: ",
     },
     {
+      type: "input",
+      name: "city",
+      message: "Enter your city: ",
+    },
+    {
+      type: "input",
+      name: "state",
+      message: "Enter your state: ",
+    },
+    {
+      type: "input",
+      name: "country",
+      message: "Enter your country: ",
+    },
+    {
       type: "password",
       name: "pin",
       message: "Enter your pin: ",
     },
     {
       type: "input",
-      name: "address",
-      message: "Enter your address: ",
-    },
-    {
-      type: "input",
       name: "bankBalance",
-      message: "Enter your bank balance: ",
+      message: "Enter amount: ",
     },
     {
       type: "input",
       name: "bankName",
       message: "Enter your bank name: ",
+    },
+    {
+      type: "input",
+      name: "accountType",
+      message: "Enter account type: ",
     },
   ];
 
@@ -74,21 +104,52 @@ module.exports = function () {
       url: "http://localhost:5000/register",
       data: answers,
     };
-
     let res = await axios(config);
-      fs.writeFile(
-        "accountNumber.txt",
-        res.data.accountNumber,
-        function (err) {
-          if (err) throw err;
-        }
-      );
+
+    const passbookArray = [
+      `Name : ${answers.name}`,
+      `S/ D/ H/ O : ${answers.FatherName}`,
+      `CIF Number : ${res.data.CIF}`,
+      `A/c Type : ${answers.accountType}`,
+      `Address: ${answers.city} ${answers.state} ${answers.country}`,
+      `Phone No. : ${answers.PhoneNo}`,
+      `Email : ${answers.email}`,
+      `-----------------------------------------------------------------`
+    ];
+
+    passbookArray.forEach((ele) => {
+      fs.appendFile("passbook.txt", ele + '\n', function (err) {
+        if (err) throw err;
+      });
+    });
+
+    // function printPassbook(ele) {
+    //   fs.appendFile("passbook.txt", ele, function (err) {
+    //     if (err) throw err;
+    //   });
+    // }
+
+    fs.writeFile("accountNumber.txt", res.data.accountNumber, function (err) {
+      if (err) throw err;
+    });
+    // console.log(answers);
+
+    var passbookRead = fs.readFileSync("passbook.txt", "utf-8");
     console.log(res.data.message);
+    console.log(passbookRead);
   }
 
   //inquirer
 
-    inquirer.prompt(registerQues).then((answers) => {
-      registerRequest(answers);
-    });
+  inquirer.prompt(registerQues).then((answers) => {
+    registerRequest(answers);
+  });
 };
+
+// "S/ D/ H/ O : " + answers.FatherName,
+// "CIF Number : " + res.data.CIF,
+// "A/c Type : " + answers.accountType,
+// "Address: " + answers.city + " " + answers.state + " " + answers.country,
+// "Phone No. : " + answers.PhoneNo,
+// "Email : " + answers.email"
+

@@ -1,7 +1,9 @@
 const { Command } = require("commander");
 const program = new Command();
+const inquirer = require("inquirer");
 
 // Axios
+// const homeAxios = require("./axios/homeA");
 const registerAxios = require("./axios/registerA");
 const loginAxios = require("./axios/loginA");
 const balanceAxios = require("./axios/balanceA");
@@ -10,7 +12,83 @@ const depositAxios = require("./axios/depositA");
 const transferAxios = require("./axios/transferA");
 const pinAxios = require("./axios/pinA");
 const historyAxios = require("./axios/historyA");
+const fdAxios = require("./axios/fdA");
 const deleteAxios = require("./axios/deleteA");
+
+// choice array
+const array = [
+  "1. Withdraw",
+  "2. Deposit",
+  "3. Check balance",
+  "4. Change pin",
+  "5. Transactions history",
+  "6. Fd",
+  "7. Delete account"
+];
+
+// function to print array
+function printArray(value) {
+  console.log(value);
+}
+
+const homeQues = [
+  {
+    type: "input",
+    name: "value",
+    message: "Enter choice (1 or 2....) ",
+  },
+];
+
+//function to check choice
+function checkChoice(answers) {
+  // for(let i=1; i<6; i++){
+  //   if(answers.value === i.toString()){
+  //     console.log("Successful");
+  //   }
+  // }
+  switch (answers.value) {
+    case "1":
+      withdrawAxios();
+      break;
+
+    case "2":
+      depositAxios();
+      break;
+
+    case "3":
+      balanceAxios();
+      break;
+
+    case "4":
+      pinAxios();
+      break;
+
+    case "5":
+      historyAxios();
+      break;
+
+    case "6":
+      fdAxios();
+      break;
+
+    case "7":
+      deleteAxios();
+      break;
+  }
+}
+
+// home page
+program
+  .command("bank")
+  .alias("bankName")
+  .description("home page")
+  .action(() => {
+    console.log("bank name ");
+    array.forEach(printArray);
+    inquirer.prompt(homeQues).then((answers) => {
+      checkChoice(answers);
+    });
+  });
 
 // register command
 program
@@ -83,7 +161,16 @@ program
     historyAxios();
   });
 
-// delete
+//fd
+program
+  .command("fd")
+  .alias("f")
+  .description("Make fd")
+  .action(() => {
+    fdAxios();
+  });
+
+//delete
 program
   .command("delete")
   .alias("del")
@@ -91,5 +178,4 @@ program
   .action(() => {
     deleteAxios();
   });
-
 program.parse(process.argv);

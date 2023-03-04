@@ -24,9 +24,12 @@ module.exports = async (req, res) => {
     //   if (ifMatch) {
     console.log(req.authuser.email);
     // console.log(req.authuser.pin);
-    return res.json({
-      message: `your bank balance is ${req.authuser.bankBalance}`,
-    });
+    // return res.json({
+    //   balance: `your bank balance is ${req.authuser.bankBalance}`,
+    // });
+        return res.json(
+        `Your bank balance is ${req.authuser.bankBalance}`,
+        );
     //   }
     //   console.log("phase 5");
     // }

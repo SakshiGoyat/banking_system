@@ -2,3 +2,4 @@ node_modules
 config.env
 token.txt
 accountNumber.txt
+passbook.txt

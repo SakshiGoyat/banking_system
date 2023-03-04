@@ -1,5 +1,5 @@
 const User = require("../models/userSchema");
-
+const transaction = require("../models/transaction");
 module.exports = async (req, res) => {
   try {
     console.log("p1");
@@ -18,9 +18,11 @@ module.exports = async (req, res) => {
     //   return res.json({ err: "invalid credential 3" });
     // } else {
       const userExist = await User.deleteOne({ email: email });
+      const transactionDeleted = await transaction.deleteMany({senderEmail: email});
     // console.log("p3");
 
       console.log(userExist);
+      console.log(transactionDeleted);
       res.json({ message: "user deleted." });
 
     // var resp = console.log("Do you want to delete your account? (yes/no) ", process.argv[2]);

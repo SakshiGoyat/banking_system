@@ -32,7 +32,17 @@ const userSchema = new mongoose.Schema({
     upperCase: true,
     Symbol: true,
   },
-
+  age:{
+    type: Number,
+    required: true
+  },
+  gender:{
+    type:String,
+  },
+  DOB:{
+    type: String,
+    required: true
+  },
   aadhaarCard: {
     type: String,
     required: true,
@@ -53,7 +63,7 @@ const userSchema = new mongoose.Schema({
     // minLength: 10,
   },
   FatherName: {
-    type:String,
+    type: String,
     required: true,
   },
   // address: {
@@ -66,10 +76,7 @@ const userSchema = new mongoose.Schema({
   //     required: true,
   //   },
   // },
-  address: {
-    type: String,
-    required: true,
-  },
+  address: {},
   accountNumber: {
     type: String,
     required: true,
@@ -78,42 +85,37 @@ const userSchema = new mongoose.Schema({
     // default: nolookalikesRndString,
     // default: nanoid
   },
-  openingDate: {
-    type: String,
-    required: true,
-    // default: Date.now() / year,
-    default: Date,
-  },
-  expiryDate: {
-    type: String,
-    required: true,
-    default: Date().year + 5,
-    // default: Date
-  },
+  // openingDate: {
+  //   type: String,
+  //   required: true,
+  //   // default: Date.now() / year,
+  //   default: Date,
+  // },
   pin: {
     type: String,
     required: true,
   },
   bankBalance: {
     type: Number,
+    required: true,
+  },
+  bankName: {
+    type: String,
+    required: true,
+  },
+  accountType: {
+    type: String,
     required: true
   },
-  bankName:{
-    type: String, 
+  CIF: {
+    type: Number,
     required: true
   },
-  // transactions:[
-  //   {
-  //     transactionType:{
-  //       type: String,
-  //       enum: ["withdraw", "deposit", "transfer"],
-  //     }
-  //   }
-  // ]
+
+  // timeStamps: true,
 });
 
 userSchema.pre("save", async function (next) {
-
   if (this.isModified("password")) {
     // console.log("hi from bcrypt");
     let newPassword = this.password.toString();
