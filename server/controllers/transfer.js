@@ -5,23 +5,15 @@ var senderAccountNumber = fs.readFileSync("accountNumber.txt", "utf8");
 
 module.exports = async (req, res) => {
   try {
-    // const { email, pin, recEmail, amount } = req.body;
-    // const { email, pin, recEmail, accountNumber, amount } = req.body;
     const { pin, accountNumber, amount, bankName } = req.body.data;
 
-    // if (!email || !pin || !recEmail || !accountNumber || !amount) {
     if (!pin || !accountNumber || !amount || !bankName) {
       return res.json({ error: "Invalid credentials" });
     }
 
     const currentUser = await User.findOne({ email: req.authuser.email });
 
-    // const userToTransfer = await User.findOne({ email: recEmail });
     const userToTransfer = await User.findOne({ accountNumber: accountNumber });
-
-    // console.log(currentUser);
-    // console.log("#######################");
-    // console.log(userToTransfer);
 
     if (!currentUser || !userToTransfer) {
       return res.json({ error: "user doesn't exist." });
@@ -31,7 +23,6 @@ module.exports = async (req, res) => {
       return res.json({error: "user doesn't exist in bank."});
     }
     
-    console.log("phase 1");
     console.log(req.authuser.email);
     if (currentUser.bankBalance > amount) {
       const updatedCurrentUser = await User.updateOne(
@@ -42,8 +33,6 @@ module.exports = async (req, res) => {
           },
         }
       );
-      // console.log(updatedCurrentUser);
-      console.log("phase 2");
 
       const updatedNewUser = await User.updateOne(
         { accountNumber: accountNumber },
@@ -53,7 +42,7 @@ module.exports = async (req, res) => {
           },
         }
       );
-      console.log("phase 3");
+
       const senderName = currentUser.name;
       const senderEmail = currentUser.email;
       const senderAccountNo = senderAccountNumber;
@@ -73,9 +62,9 @@ module.exports = async (req, res) => {
         transactionType,
       });
       const transactionSave = await transaction.save();
-      console.log("Transaction save ", transactionSave);
+      // console.log("Transaction save ", transactionSave);
       return res.json({
-        message: `transaction is successful, and Rs. ${amount} is transfered.`,
+        message: `Transaction is successful, and Rs.${amount} has been transfered.`,
       });
     }
   } catch (err) {

@@ -1,9 +1,10 @@
+#!/usr/bin/env node
 const { Command } = require("commander");
 const program = new Command();
 const inquirer = require("inquirer");
+const cfonts = require("cfonts");
 
 // Axios
-// const homeAxios = require("./axios/homeA");
 const registerAxios = require("./axios/registerA");
 const loginAxios = require("./axios/loginA");
 const balanceAxios = require("./axios/balanceA");
@@ -16,22 +17,7 @@ const fdAxios = require("./axios/fdA");
 const deleteAxios = require("./axios/deleteA");
 
 // choice 1
-const array = [
-  "1. New account",
-  "2. Already have account"
-]
-
-
-const array1 = [
-  "1. Withdraw",
-  "2. Deposit",
-  "3. Check balance",
-  "4. Change pin",
-  "5. Transactions history",
-  "6. Fd",
-  "7. Delete account"
-];
-
+const array = ["1. New account", "2. Already have account"];
 
 const homeQues = [
   {
@@ -42,59 +28,65 @@ const homeQues = [
 ];
 
 //function to check choice
-
-function checkChoice(answer){
-  if(answer.value === "1"){
+function checkChoice(answer) {
+  if (answer.value === "1") {
     registerAxios();
-  }else{
+  } else {
     loginAxios();
   }
 }
-// function checkChoice1(answers) {
-//   // for(let i=1; i<6; i++){
-//   //   if(answers.value === i.toString()){
-//   //     console.log("Successful");
-//   //   }
-//   // }
-//   switch (answers.value) {
-//     case "1":
-//       withdrawAxios();
-//       break;
 
-//     case "2":
-//       depositAxios();
-//       break;
+cfonts.say("Welcome!", {
+  font: "chrome", // define the font face
+  align: "center", // define text alignment
+  colors: ["system"], // define all colors
+  background: "transparent", // define the background color, you can also use `backgroundColor` here as key
+  letterSpacing: 1, // define letter spacing
+  lineHeight: 1, // define the line height
+  space: true, // define if the output text should have empty lines on top and on the bottom
+  maxLength: "0", // define how many character can be on one line
+  gradient: false, // define your two gradient colors
+  independentGradient: false, // define if you want to recalculate the gradient for each new line
+  transitionGradient: false, // define if this is a transition between colors directly
+  env: "node", // define the environment cfonts is being executed in
+});
 
-//     case "3":
-//       balanceAxios();
-//       break;
+cfonts.say("Bank of Origin", {
+  font: "block", // define the font face
+  align: "center", // define text alignment
+  colors: ["system"], // define all colors
+  background: "transparent", // define the background color, you can also use `backgroundColor` here as key
+  letterSpacing: 1, // define letter spacing
+  lineHeight: 1, // define the line height
+  space: true, // define if the output text should have empty lines on top and on the bottom
+  maxLength: "0", // define how many character can be on one line
+  gradient: false, // define your two gradient colors
+  independentGradient: false, // define if you want to recalculate the gradient for each new line
+  transitionGradient: false, // define if this is a transition between colors directly
+  env: "node", // define the environment cfonts is being executed in
+});
 
-//     case "4":
-//       pinAxios();
-//       break;
-
-//     case "5":
-//       historyAxios();
-//       break;
-
-//     case "6":
-//       fdAxios();
-//       break;
-
-//     case "7":
-//       deleteAxios();
-//       break;
-//   }
-// }
-
+cfonts.say("The Changing Face of Prosperity", {
+  font: "chrome", // define the font face
+  align: "center", // define text alignment
+  colors: ["system"], // define all colors
+  background: "transparent", // define the background color, you can also use `backgroundColor` here as key
+  letterSpacing: 1, // define letter spacing
+  lineHeight: 1, // define the line height
+  space: true, // define if the output text should have empty lines on top and on the bottom
+  maxLength: "0", // define how many character can be on one line
+  gradient: false, // define your two gradient colors
+  independentGradient: false, // define if you want to recalculate the gradient for each new line
+  transitionGradient: false, // define if this is a transition between colors directly
+  env: "node", // define the environment cfonts is being executed in
+});
 // home page
 program
-  .command("bank")
-  .alias("bankName")
+  .command("start")
+  .alias("s")
   .description("home page")
   .action(() => {
-    console.log("bank name ");
-    array.forEach((value)=>{
+    array.forEach((value) => {
       console.log(value);
     });
     inquirer.prompt(homeQues).then((answers) => {
@@ -106,7 +98,7 @@ program
 program
   .command("register")
   .alias("r")
-  .description("user is registed")
+  .description("User has been registed")
   .action(() => {
     registerAxios();
   });
@@ -115,7 +107,7 @@ program
 program
   .command("login")
   .alias("l")
-  .description("user is logged in")
+  .description("User has been logged in")
   .action(() => {
     loginAxios();
   });
@@ -124,7 +116,7 @@ program
 program
   .command("balance")
   .alias("b")
-  .description("balance is printed.")
+  .description("Bank balance is printed.")
   .action(() => {
     balanceAxios();
   });
@@ -133,7 +125,7 @@ program
 program
   .command("withdrawal")
   .alias("w")
-  .description("Money is detacted.")
+  .description("Given amount has been withdrawaled.")
   .action(() => {
     withdrawAxios();
   });
@@ -151,7 +143,7 @@ program
 program
   .command("transfer")
   .alias("t")
-  .description("amount has been transfered.")
+  .description("Amount has been transfered.")
   .action(() => {
     transferAxios();
   });
@@ -160,7 +152,7 @@ program
 program
   .command("pin")
   .alias("p")
-  .description("pin has been updated.")
+  .description("Pin has been updated.")
   .action(() => {
     pinAxios();
   });
@@ -168,7 +160,7 @@ program
 program
   .command("history")
   .alias("h")
-  .description("history is printed.")
+  .description("History is printed.")
   .action((_id) => {
     historyAxios();
   });
@@ -186,7 +178,7 @@ program
 program
   .command("delete")
   .alias("del")
-  .description("account is deleted.")
+  .description("Account is deleted.")
   .action(() => {
     deleteAxios();
   });

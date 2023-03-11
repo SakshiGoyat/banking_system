@@ -1,5 +1,4 @@
 const Fd = require("../models/fdSchema");
-// const user = require("../models/userSchema");
 
 const fdir = [
   [7, 45, 3, 3.5],
@@ -10,24 +9,18 @@ const fdir = [
 
 module.exports = async (req, res) => {
   try {
-    const { option, amount, nomine } = req.body.data;
+    const { option, amount, nominee } = req.body.data;
 
-    // console.log(req.body.data.option);
-    // console.log(req.body.amount);
-    if (!amount || !option || !nomine) {
+    if (!amount || !option || !nominee) {
       return res
         .status(400)
         .json({ error: "pls fill the credentials correctly." });
     }
 
-    // getting token
-    // const token = await req.authuser.generateAuthToken1();
-    // console.log(token);
-
     //name
     const name = req.authuser.name;
     // generating token
-    const token = Math.floor(Math.random() * 1000);
+    const token = Math.floor(Math.random() * 10000);
     // storing interest
     let interest;
     if (req.authuser.age > 60) {
@@ -54,26 +47,15 @@ module.exports = async (req, res) => {
       max,
       fdDate,
       token,
-      nomine,
+      nominee,
     });
 
     newFd.save();
-    // console.log(newFd);
-    // console.log(req.authuser.fd);
-    // const updateFd = user.updateOne(
-    //   { email: req.authuser.email },
-    //   {
-    //     $set: {
-    //       fd.push(newFd),
-    //     },
-    //   }
-    // );
-    // console.log(updateFd);
-    //
+    
     // req.authuser.fd = req.authuser.fd.push(newFd);
     req.authuser.fds = req.authuser.fds.push(newFd);
     console.log(req.authuser.fds);
-    res.json({ message: "Successful", newFd });
+    res.json({ message: "Fd is successfully made.", newFd });
   } catch (err) {
     console.log(err);
   }

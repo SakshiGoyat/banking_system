@@ -1,6 +1,6 @@
-const inquirer = require("inquirer");
 const axios = require("axios");
 const retrieveUserToken = require("../utility/retrieveUserToken");
+const functionality = require("../controllers/functionalities");
 
 module.exports = function () {
   //history axios
@@ -11,17 +11,15 @@ module.exports = function () {
     // };
 
     // let res = await axios(config);
-const userToken = retrieveUserToken();
+    const userToken = retrieveUserToken();
 
-let res = await axios.get(
-  "http://localhost:5000/history",
-  {
-    headers: {
-      Authorization: `Bearer ${userToken}`,
-    },
-  }
-);
-    console.log(res.data);
+    let res = await axios.get("http://localhost:5000/history", {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+    console.log(res.data, "\n");
+    functionality();
   }
 
   //inquirer

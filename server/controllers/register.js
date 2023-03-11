@@ -2,7 +2,6 @@ const Evalidator = require("email-validator");
 const Avalidator = require("aadhaar-validator");
 const User = require("../models/userSchema");
 const nolookalikes = require("nanoid-generate/nolookalikes");
-// const fs = require("fs");
 
 module.exports = async (req, res) => {
   // storing the values into variables.
@@ -27,7 +26,6 @@ module.exports = async (req, res) => {
     accountType
   } = req.body;
 
-  // const { city, state } = address;
   //checking whether all the values are filled or not
   if (
     !name ||
@@ -49,28 +47,26 @@ module.exports = async (req, res) => {
     !bankName ||
     !accountType
   ) {
-    return res.status(404).json({ error: "plz fill the fields properly." });
+    return res.status(404).json({ error: "please fill all the fields properly." });
   }
   // validation for email
   if (!Evalidator.validate(email)) {
-    return res.json({ error: "not a validate syntax." });
+    return res.json({ error: "It is not a valid syntax of email." });
   }
   // checking whether entired password or confirmed password is same or not.
   if (password != cPassword) {
-    return res.json({ error: "password doesn't match" });
+    return res.json({ error: "Password doesn't match" });
   }
 
   if (!Avalidator.isValidNumber(aadhaarCard)) {
-    return res.json({ error: "not a valid aadhaar card" });
+    return res.json({ error: "It is not a valid aadhaar card number" });
   }
 
   // checking bank balance
-
   if (bankBalance < 1000) {
     return res.json({ error: "Bank balance is less than required." });
   }
   try {
-    // checking the uniqeness of email
     const userExist = await User.findOne({ email: email });
 
     if (userExist) {

@@ -35,7 +35,7 @@ const fdSchema = new mongoose.Schema([
       type: Number,
       required: true,
     },
-    nomine: {
+    nominee: {
       type: String,
       required: true,
     },

@@ -2,6 +2,8 @@ const inquirer = require("inquirer");
 const axios = require("axios");
 const retrieveUserToken = require("../utility/retrieveUserToken");
 const fs = require("fs");
+const functionality = require("../controllers/functionalities");
+
 module.exports = function () {
   //Questions
   fdChooses = ["1. Make fd", "2. Withdraw fd"];
@@ -28,8 +30,8 @@ module.exports = function () {
     },
     {
       type: "input",
-      name: "nomine",
-      message: "Nomine name: ",
+      name: "nominee",
+      message: "Nominee name: ",
     },
   ];
 
@@ -64,7 +66,8 @@ module.exports = function () {
       }
     );
 
-    console.log(res.data);
+    console.log(res.data.message, "\n");
+    functionality();
   }
 
   // make fd axios
@@ -83,19 +86,19 @@ module.exports = function () {
       }
     );
 
-    fdPassbook = `
+    const fdPassbook = `
 ----------------------------------------------------------------
                     | Bank of Origin |
                      ----------------
     Name: ${res.data.newFd.name}
     Account Number: ${res.data.newFd.accountNumber}
     Token: ${res.data.newFd.token}
-    Amount: ${res.data.newFd.amount},
+    Amount: Rs.${res.data.newFd.amount},
     Interest Rate: ${res.data.newFd.interest}
-    Minimum time: ${res.data.newFd.min}
-    Maximum time: ${res.data.newFd.max}
+    Minimum time: ${res.data.newFd.min} days
+    Maximum time: ${res.data.newFd.max} days
     Fd Date: ${res.data.newFd.fdDate}
-    Nomine: ${res.data.newFd.nomine}
+    Nominee: ${res.data.newFd.nominee}
 -----------------------------------------------------------------
     `;
 
@@ -103,10 +106,11 @@ module.exports = function () {
       if (err) throw err;
     });
 
-    const readFdFile = await fs.readFileSync("fdPassbook.txt", "utf-8");
+    // const readFdFile = await fs.readFileSync("fdPassbook.txt", "utf-8");
 
     console.log(res.data.message);
-    console.log(readFdFile);
+    console.log(fdPassbook, "\n");
+    functionality();
   }
 
   //inquirer

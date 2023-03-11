@@ -1,7 +1,8 @@
 const inquirer = require("inquirer");
 const axios = require("axios");
 const retrieveUserToken = require("../utility/retrieveUserToken");
-
+const functionality = require("../controllers/functionalities");
+ 
 module.exports = function () {
   //Questions
   const deleteQues = [
@@ -36,7 +37,8 @@ module.exports = function () {
         },
       }
     );
-    console.log(res.data);
+    console.log(res.data.message, "\n");
+    functionality();
   }
 
   //inquirer

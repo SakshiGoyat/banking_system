@@ -3,6 +3,7 @@
     "aadhaar-validator": "^1.1.0",
     "axios": "^1.3.2",
     "bcrypt": "^5.1.0",
+    "cfonts": "^3.1.1",
     "commander": "^10.0.0",
     "dotenv": "^16.0.3",
     "email-validator": "^2.0.4",
@@ -17,16 +18,15 @@
   },
   "name": "banking-system",
   "version": "1.0.0",
+  "description": "banking system cli",
   "main": "index.js",
+  "preferGlobal": true,
+  "bin": "./commander.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js",
-    "register": "node commander.js register",
-    "login": "node commander.js login"
-
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "description": ""
+  "license": "ISC"
 }

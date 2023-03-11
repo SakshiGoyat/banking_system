@@ -35,9 +35,10 @@ module.exports = function () {
     fs.writeFile("token.txt", res.data.token, function (err) {
       if (err) throw err;
     });
-    console.log(res.data.message);
+    console.log(res.data.message, "\n");
     if (res.data.success === "true") {
-      functionality();
+        functionality();
+
     }
   }
 

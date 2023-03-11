@@ -32,16 +32,16 @@ const userSchema = new mongoose.Schema({
     upperCase: true,
     Symbol: true,
   },
-  age:{
+  age: {
     type: Number,
-    required: true
+    required: true,
   },
-  gender:{
-    type:String,
-  },
-  DOB:{
+  gender: {
     type: String,
-    required: true
+  },
+  DOB: {
+    type: String,
+    required: true,
   },
   aadhaarCard: {
     type: String,
@@ -52,39 +52,29 @@ const userSchema = new mongoose.Schema({
   PANCard: {
     type: Number,
     required: true,
-    // unique: true,
-    // maxLength: 10,
-    // minLength: 10,
+    unique: true,
+    maxLength: 10,
+    minLength: 10,
   },
   PhoneNo: {
     type: String,
     required: true,
-    // unique: true
-    // maxLength: 10,
-    // minLength: 10,
+    unique: true,
+    maxLength: 10,
+    minLength: 10,
   },
   FatherName: {
     type: String,
     required: true,
   },
-  // address: {
-  //   city: {
-  //     type: String,
-  //     required: true,
-  //   },
-  //   state: {
-  //     type: String,
-  //     required: true,
-  //   },
-  // },
+
   address: {},
   accountNumber: {
     type: String,
     required: true,
     unique: true,
     immutable: true,
-    // default: nolookalikesRndString,
-    // default: nanoid
+
   },
   openingDate: {
     type: String,
@@ -104,14 +94,14 @@ const userSchema = new mongoose.Schema({
   },
   accountType: {
     type: String,
-    required: true
+    required: true,
   },
   CIF: {
     type: Number,
-    required: true
+    required: true,
   },
-  fds:[]
-      // timeStamps: true,
+  fds: [],
+
 });
 
 userSchema.pre("save", async function (next) {

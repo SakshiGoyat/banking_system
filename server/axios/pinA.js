@@ -1,6 +1,7 @@
 const inquirer = require("inquirer");
 const axios = require("axios");
 const retrieveUserToken = require("../utility/retrieveUserToken");
+const functionality = require("../controllers/functionalities");
 
 module.exports = function () {
   //questions
@@ -10,11 +11,6 @@ const pinQues = [
     name: "accountNumber",
     message: "Enter Account Number: ",
   },
-  // {
-  //   type: "password",
-  //   name: "pin",
-  //   message: "Enter Current Pin: ",
-  // },
   {
     type: "password",
     name: "newPin",
@@ -24,11 +20,7 @@ const pinQues = [
 
   //update pin axios
   async function pinRequest(answers) {
-  //   const config = {
-  //     method: "post",
-  //     url: "http://localhost:5000/pin",
-  //     data: answers,
-  //   };
+
     const userToken = retrieveUserToken();
 
     let res = await axios.post(
@@ -42,10 +34,10 @@ const pinQues = [
         },
       }
     );
-  //   let res = await axios(config);
 
+    console.log(res.data.message, "\n");
+    functionality();
 
-    console.log(res.data);
   }
 
   //inquirer

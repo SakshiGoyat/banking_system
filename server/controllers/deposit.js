@@ -4,25 +4,17 @@ const bcrypt = require("bcrypt");
 
 module.exports = async (req, res) => {
   try {
-    // const { email, pin, amount } = req.body;
     const { pin, amount } = req.body.data;
-    // console.log(amount);
-    // if (!email || !pin || !amount) {
     if (!pin || !amount) {
       return res.json({ error: "invalid credentials" });
     }
     const userExist = await User.findOne({ email: req.authuser.email });
 
     if (userExist) {
-      console.log("p1");
-      console.log(userExist.pin);
       const ifMatch = await bcrypt.compare(pin, userExist.pin);
 
-      console.log(userExist.email);
-      console.log(ifMatch);
-      // if (pin === userExist.pin) {
       if (ifMatch) {
-        res.json({ message: `transaction successful and ${amount}` });
+        res.json({ message: `Transaction successful and Rs.${amount}` });
         const updated = await User.updateOne(
           { email: userExist.email },
           {
@@ -34,7 +26,7 @@ module.exports = async (req, res) => {
         //storing in transaction schema
         const senderName = userExist.name;
         const senderEmail = userExist.email;
-        const senderAccountNo = senderAccountNumber;
+        const senderAccountNo = userExist.accountNumber;
         const recieverEmail = null;
         const recieverName = null;
         const recieverAccountNo = null;
@@ -51,9 +43,9 @@ module.exports = async (req, res) => {
           transactionType,
         });
         const transactionSave = await transaction.save();
-        console.log("Transaction save ", transactionSave);
+        // console.log("Transaction save ", transactionSave);
 
-        return console.log(userExist.bankBalance);
+        // return console.log(userExist.bankBalance);
       }
     }
   } catch (err) {

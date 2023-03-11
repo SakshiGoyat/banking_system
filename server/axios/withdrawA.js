@@ -1,16 +1,12 @@
 const inquirer = require("inquirer");
 const axios = require("axios");
 const retrieveUserToken = require("../utility/retrieveUserToken");
+const functionality = require("../controllers/functionalities");
 
 module.exports = function(){
 
     //Questions
   const withdrawalQues = [
-    // {
-    //   type: "input",
-    //   name: "email",
-    //   message: "Enter your email: ",
-    // },
     {
       type: "password",
       name: "pin",
@@ -39,7 +35,9 @@ module.exports = function(){
       }
     );
 
-    console.log(res.data);
+    console.log(res.data.message, "\n");
+    functionality();
+
   }
 
   //inquirer

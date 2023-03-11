@@ -1,6 +1,7 @@
 // const inquirer = require("inquirer");
 const axios = require("axios");
 const retrieveUserToken = require("../utility/retrieveUserToken");
+const functionality = require("../controllers/functionalities");
 
 module.exports = () => {
   //balance axios
@@ -13,7 +14,9 @@ module.exports = () => {
       },
     });
 
-    console.log(res.data);
+    console.log(res.data, "\n");
+    functionality();
+
   }
   //calling function
   balanceRequest();
