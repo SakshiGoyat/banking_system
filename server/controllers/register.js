@@ -79,6 +79,8 @@ module.exports = async (req, res) => {
 
     const accountNumber  = nolookalikes(10);
     const CIF = Math.floor(Math.random()*1000000000000);
+    let now = new Date();
+    const openingDate = now.getFullYear();
     let address = {
       city: city,
       state: state,
@@ -97,6 +99,7 @@ module.exports = async (req, res) => {
       PANCard,
       PhoneNo,
       FatherName,
+      openingDate,
       pin,
       address,
       accountNumber,
@@ -107,11 +110,13 @@ module.exports = async (req, res) => {
     });
 
     const userRegister = await user.save();
+    const userLogin = await User.findOne({ email: email });
 
     if (userRegister) {
-      res.status(201).json({ message: "user registered successfully", accountNumber, CIF });
+      const token = await userLogin.generateAuthToken();
+      res.status(201).json({ success: "true", message: "user registered successfully", accountNumber, CIF, token });
     } else {
-      res.status(404).json({ message: "user is not registered successfully"});
+      res.status(404).json({ success: "false", message: "user is not registered successfully"});
     }
   } catch (err) {
     console.log(err);

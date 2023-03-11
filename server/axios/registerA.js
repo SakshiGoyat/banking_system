@@ -1,7 +1,7 @@
 const inquirer = require("inquirer");
 const axios = require("axios");
 const fs = require("fs");
-
+const functionality = require("../controllers/functionalities");
 module.exports = function () {
   // Questions
   const registerQues = [
@@ -95,6 +95,11 @@ module.exports = function () {
       name: "accountType",
       message: "Enter account type: ",
     },
+    {
+      type: "file",
+      name: "fileUpload",
+      message: "Upload file",
+    },
   ];
 
   // register axios
@@ -106,21 +111,23 @@ module.exports = function () {
     };
     let res = await axios(config);
 
-    const passbookArray = [
-      `Name : ${answers.name}`,
-      `S/ D/ H/ O : ${answers.FatherName}`,
-      `CIF Number : ${res.data.CIF}`,
-      `A/c Type : ${answers.accountType}`,
-      `Address: ${answers.city} ${answers.state} ${answers.country}`,
-      `Phone No. : ${answers.PhoneNo}`,
-      `Email : ${answers.email}`,
-      `-----------------------------------------------------------------`
-    ];
+    const passbookArray = `
+-----------------------------------------------------------------------
+                      |Bank of Origin|
+                       --------------
+      Name : ${answers.name}
+      S/ D/ H/ O : ${answers.FatherName}
+      CIF Number : ${res.data.CIF}
+      Account Number: ${res.data.accountNumber}
+      A/c Type : ${answers.accountType}
+      Address: ${answers.city} ${answers.state} ${answers.country}
+      Phone No. : ${answers.PhoneNo}
+      Email : ${answers.email}
+-------------------------------------------------------------------------
+      `;
 
-    passbookArray.forEach((ele) => {
-      fs.appendFile("passbook.txt", ele + '\n', function (err) {
-        if (err) throw err;
-      });
+    fs.writeFile("passbook.txt", passbookArray, function (err) {
+      if (err) throw err;
     });
 
     // function printPassbook(ele) {
@@ -134,9 +141,18 @@ module.exports = function () {
     });
     // console.log(answers);
 
-    var passbookRead = fs.readFileSync("passbook.txt", "utf-8");
+    var passbookRead = await fs.readFileSync("passbook.txt", "utf-8");
     console.log(res.data.message);
-    console.log(passbookRead);
+
+    fs.writeFile("token.txt", res.data.token, function (err) {
+      if (err) throw err;
+    });
+
+    if (res.data.success === "true") {
+      console.log(passbookRead);
+      console.log();
+      functionality();
+    }
   }
 
   //inquirer
@@ -152,4 +168,3 @@ module.exports = function () {
 // "Address: " + answers.city + " " + answers.state + " " + answers.country,
 // "Phone No. : " + answers.PhoneNo,
 // "Email : " + answers.email"
-

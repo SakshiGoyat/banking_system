@@ -15,8 +15,14 @@ const historyAxios = require("./axios/historyA");
 const fdAxios = require("./axios/fdA");
 const deleteAxios = require("./axios/deleteA");
 
-// choice array
+// choice 1
 const array = [
+  "1. New account",
+  "2. Already have account"
+]
+
+
+const array1 = [
   "1. Withdraw",
   "2. Deposit",
   "3. Check balance",
@@ -26,56 +32,60 @@ const array = [
   "7. Delete account"
 ];
 
-// function to print array
-function printArray(value) {
-  console.log(value);
-}
 
 const homeQues = [
   {
     type: "input",
     name: "value",
-    message: "Enter choice (1 or 2....) ",
+    message: "Enter choice (1 or 2) ",
   },
 ];
 
 //function to check choice
-function checkChoice(answers) {
-  // for(let i=1; i<6; i++){
-  //   if(answers.value === i.toString()){
-  //     console.log("Successful");
-  //   }
-  // }
-  switch (answers.value) {
-    case "1":
-      withdrawAxios();
-      break;
 
-    case "2":
-      depositAxios();
-      break;
-
-    case "3":
-      balanceAxios();
-      break;
-
-    case "4":
-      pinAxios();
-      break;
-
-    case "5":
-      historyAxios();
-      break;
-
-    case "6":
-      fdAxios();
-      break;
-
-    case "7":
-      deleteAxios();
-      break;
+function checkChoice(answer){
+  if(answer.value === "1"){
+    registerAxios();
+  }else{
+    loginAxios();
   }
 }
+// function checkChoice1(answers) {
+//   // for(let i=1; i<6; i++){
+//   //   if(answers.value === i.toString()){
+//   //     console.log("Successful");
+//   //   }
+//   // }
+//   switch (answers.value) {
+//     case "1":
+//       withdrawAxios();
+//       break;
+
+//     case "2":
+//       depositAxios();
+//       break;
+
+//     case "3":
+//       balanceAxios();
+//       break;
+
+//     case "4":
+//       pinAxios();
+//       break;
+
+//     case "5":
+//       historyAxios();
+//       break;
+
+//     case "6":
+//       fdAxios();
+//       break;
+
+//     case "7":
+//       deleteAxios();
+//       break;
+//   }
+// }
 
 // home page
 program
@@ -84,7 +94,9 @@ program
   .description("home page")
   .action(() => {
     console.log("bank name ");
-    array.forEach(printArray);
+    array.forEach((value)=>{
+      console.log(value);
+    });
     inquirer.prompt(homeQues).then((answers) => {
       checkChoice(answers);
     });
@@ -121,7 +133,7 @@ program
 program
   .command("withdrawal")
   .alias("w")
-  .description("member is removed.")
+  .description("Money is detacted.")
   .action(() => {
     withdrawAxios();
   });
@@ -130,7 +142,7 @@ program
 program
   .command("deposit")
   .alias("d")
-  .description("amount is deposited.")
+  .description("Amount is deposited.")
   .action(() => {
     depositAxios();
   });

@@ -1,0 +1,15 @@
+
+----------------------------------------------------------------
+                    | Bank of Origin |
+                     ----------------
+    Name: sakshi
+    Account Number: Nx5QGcascG
+    Token: 90
+    Amount: 70,
+    Interest Rate: 5
+    Minimum time: 46
+    Maximum time: 179
+    Fd Date: 2023-03-10T06:16:23.485Z
+    Nomine: f
+-----------------------------------------------------------------
+    

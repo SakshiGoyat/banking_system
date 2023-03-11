@@ -52,13 +52,14 @@ const userSchema = new mongoose.Schema({
   PANCard: {
     type: Number,
     required: true,
-    unique: true,
+    // unique: true,
     // maxLength: 10,
     // minLength: 10,
   },
   PhoneNo: {
     type: String,
     required: true,
+    // unique: true
     // maxLength: 10,
     // minLength: 10,
   },
@@ -85,12 +86,10 @@ const userSchema = new mongoose.Schema({
     // default: nolookalikesRndString,
     // default: nanoid
   },
-  // openingDate: {
-  //   type: String,
-  //   required: true,
-  //   // default: Date.now() / year,
-  //   default: Date,
-  // },
+  openingDate: {
+    type: String,
+    required: true,
+  },
   pin: {
     type: String,
     required: true,
@@ -111,8 +110,8 @@ const userSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-
-  // timeStamps: true,
+  fds:[]
+      // timeStamps: true,
 });
 
 userSchema.pre("save", async function (next) {

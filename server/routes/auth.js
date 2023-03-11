@@ -13,6 +13,8 @@ const depositController = require("../controllers/deposit");
 const withdrawController = require("../controllers/withdraw");
 const transferController = require("../controllers/transfer");
 const historyController = require("../controllers/history");
+const fdController = require("../controllers/MakeFd");
+const fdWithdraw = require("../controllers/withdrawFd");
 const pinController = require("../controllers/pin");
 const deleteController = require("../controllers/delete");
 
@@ -39,6 +41,12 @@ router.post("/deposit", Authenticate, depositController);
 
 // transfer route
 router.post("/transfer", Authenticate, transferController);
+
+// make fd route
+router.post("/fd", Authenticate, fdController);
+
+// withdraw fd route
+router.post("/fdWithdraw", Authenticate, fdWithdraw);
 
 // history route
 router.get("/history", Authenticate, historyController);
@@ -185,7 +193,6 @@ module.exports = router;
 //       res.json({ error: "invalid acc" });
 //     }
 
-
 // const Evalidator = require("email-validator");
 // const Avalidator = require("aadhaar-validator");
 // const bcrypt = require("bcrypt");
@@ -197,7 +204,6 @@ module.exports = router;
 // const nolookalikes = require("nanoid-generate/nolookalikes");
 
 // importing databases.
-
 
 // require("../commander") // giving error.
 

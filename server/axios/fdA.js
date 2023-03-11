@@ -1,115 +1,132 @@
 const inquirer = require("inquirer");
 const axios = require("axios");
 const retrieveUserToken = require("../utility/retrieveUserToken");
-
+const fs = require("fs");
 module.exports = function () {
   //Questions
-  // const fdChoice = [
-  //   // {
-  //   //   type: "input",
-  //   //   name: "email",
-  //   //   message: "Enter your email: ",
-  //   // },
-  //   {
-  //     type: "input",
-  //     name: "choice",
-  //     message: "Enter fd to check the options: ",
-  //   },
-  //   // {
-  //   //   type: "input",
-  //   //   name: "amount",
-  //   //   message: "Enter the amount you want to deposit: ",
-  //   // },
-  // ];
+  fdChooses = ["1. Make fd", "2. Withdraw fd"];
 
-  // const options = [
-  //   {
-  //     type: "output",
-  //     name: "duration",
-  //     message: "For 6 months at the interest rate of ____",
-  //   },
-  //   {
-  //     type: "output",
-  //     name: "duration",
-  //     message: "For 1 year at the interest rate of ____",
-  //   },
-  //   {
-  //     type: "output",
-  //     name: "duration",
-  //     message: "For 1.5 years at the interest rate of ____",
-  //   },
-  // ];
-
-  const options = [
-    "For 6 months at the interest rate of ____",
-    "For 1 year at the interest rate of ____",
-    "For 1.5 years at the interest rate of ____",
-  ];
-
-  //function to print array
-  // function printArray(value){
-  //   console.log(value);
-  // }
-
+  // choose options question
   const chooseOption = [
     {
       type: "input",
       name: "fd",
-      message: "Do you want to make fd (yes or y)? "
-    }
-  ]
-
+      message: "Enter option: ",
+    },
+  ];
+  //make fd questions
   const fdQues = [
-    // {
-    //   type: "input",
-    //   name: "amount",
-    //   message: "Enter the time: ",
-    // },
+    {
+      type: "input",
+      name: "option",
+      message: "Enter option: ",
+    },
     {
       type: "input",
       name: "amount",
       message: "Enter the amount: ",
     },
-    // {
-    //   type: "input",
-    //   name: "amount",
-    //   message: "Enter the amount: ",
-    // },
+    {
+      type: "input",
+      name: "nomine",
+      message: "Nomine name: ",
+    },
   ];
 
-  // deposit axios
-  // async function depositRequest(answers) {
-    // const config = {
-    //   method: "post",
-    //   url: "http://localhost:5000/deposit",
-    //   data: answers,
-    // };
-    // const userToken = retrieveUserToken();
+  //withdrawal fd question
+  const withdFd = [
+    {
+      type: "input",
+      name: "account",
+      message: "Enter account Number: ",
+    },
+    {
+      type: "input",
+      name: "token",
+      message: "Enter token: ",
+    },
+  ];
 
-  //   let res = await axios.post(
-  //     "http://localhost:5000/deposit",
-  //     {
-  //       data: answers,
-  //     },
-  //     {
-  //       headers: {
-  //         Authorization: `Bearer ${userToken}`,
-  //       },
-  //     }
-  //   );
+  // withdraw fd request
 
-  //   console.log(res.data);
-  // }
+  async function withdFdRequest(ans) {
+    const userToken = retrieveUserToken();
+
+    let res = await axios.post(
+      "http://localhost:5000/fdWithdraw",
+      {
+        data: ans,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
+
+    console.log(res.data);
+  }
+
+  // make fd axios
+  async function fdRequest(answers) {
+    const userToken = retrieveUserToken();
+
+    let res = await axios.post(
+      "http://localhost:5000/fd",
+      {
+        data: answers,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
+
+    fdPassbook = `
+----------------------------------------------------------------
+                    | Bank of Origin |
+                     ----------------
+    Name: ${res.data.newFd.name}
+    Account Number: ${res.data.newFd.accountNumber}
+    Token: ${res.data.newFd.token}
+    Amount: ${res.data.newFd.amount},
+    Interest Rate: ${res.data.newFd.interest}
+    Minimum time: ${res.data.newFd.min}
+    Maximum time: ${res.data.newFd.max}
+    Fd Date: ${res.data.newFd.fdDate}
+    Nomine: ${res.data.newFd.nomine}
+-----------------------------------------------------------------
+    `;
+
+    fs.writeFile("fdPassbook.txt", fdPassbook, function (err) {
+      if (err) throw err;
+    });
+
+    const readFdFile = await fs.readFileSync("fdPassbook.txt", "utf-8");
+
+    console.log(res.data.message);
+    console.log(readFdFile);
+  }
 
   //inquirer
-      options.forEach(element => {
-        console.log(element);
+  const fdOptions = fs.readFileSync("fdChooses.txt", "utf-8");
+  fdChooses.forEach((element) => {
+    console.log(element);
+  });
+
+  inquirer.prompt(chooseOption).then((answer) => {
+    if (answer.fd === "1") {
+      console.log(fdOptions);
+      inquirer.prompt(fdQues).then((ans) => {
+        fdRequest(ans);
+        // console.log(ans);
       });
-      inquirer.prompt(chooseOption).then((answers) => {
-          if(answers.fd === "yes" || answers.fd === "y"){
-            inquirer.prompt(fdQues).then((ans)=>{
-              console.log(ans);
-            })
-          }
-        });
-}
+    }
+    if (answer.fd === "2") {
+      inquirer.prompt(withdFd).then((ans) => {
+        withdFdRequest(ans);
+      });
+    }
+  });
+};

@@ -1,6 +1,7 @@
 const inquirer = require("inquirer");
 const axios = require("axios");
 const fs = require("fs");
+const functionality = require("../controllers/functionalities");
 
 module.exports = function () {
   //Question
@@ -35,8 +36,12 @@ module.exports = function () {
       if (err) throw err;
     });
     console.log(res.data.message);
+    if (res.data.success === "true") {
+      functionality();
+    }
   }
 
+  
   //inquirer
   inquirer.prompt(loginQues).then((answers) => {
     loginRequest(answers);
