@@ -1,7 +1,6 @@
 const User = require("../models/userSchema");
 const Transaction = require("../models/transaction");
 const fs = require("fs");
-var senderAccountNumber = fs.readFileSync("accountNumber.txt", "utf8");
 
 module.exports = async (req, res) => {
   try {
@@ -45,7 +44,7 @@ module.exports = async (req, res) => {
 
       const senderName = currentUser.name;
       const senderEmail = currentUser.email;
-      const senderAccountNo = senderAccountNumber;
+      const senderAccountNo = currentUser.accountNumber;
       const recieverName = userToTransfer.name;
       const recieverEmail = userToTransfer.email;
       const recieverAccountNo = userToTransfer.accountNumber;

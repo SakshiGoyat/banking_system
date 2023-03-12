@@ -136,7 +136,7 @@ module.exports = async (req, res) => {
         });
     }
   } catch (err) {
-    console.log(err);
-    return res.status(404).json({ error: err });
+    console.log(err.data);
+    return res.status(404).json({ error: err.data });
   }
 };
