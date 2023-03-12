@@ -1,4 +1,22 @@
 
+# Banking System
+
+A cli package which can be used in banking system to operate users account and provide them various functionalities like deposit money, withdraw money, make fds and many more. Users data is stored in their corresponding accounts by hashing their passwords and pin. Proper authentication is used at various stages to secure the system from hackers/intruder.
+
+
+
+
+## Tech Stack
+
+
+
+Server:  `Node.js` `Express.js` `MongoDB` `Javascript` 
+
+Client: `commander.js` `inquirer.js` `bcrypt.js`
+
+
+
+
 ## Installation
 
 1. First install banking system package globally in your system :
@@ -86,4 +104,9 @@ To logged in an existing account :
 ## Advantage 
 The user need not to run particular commands that correspond to the requirements.
 The system is fully automated, and users only need to choose from the given options that best suit their needs.
+
+
+## Authors
+- [SakshiGoyat](https://github.com/SakshiGoyat)
+- [muskandn](https://github.com/muskandn)
 
