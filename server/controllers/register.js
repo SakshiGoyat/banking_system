@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
     country,
     bankBalance,
     bankName,
-    accountType
+    accountType,
   } = req.body;
 
   //checking whether all the values are filled or not
@@ -47,21 +47,29 @@ module.exports = async (req, res) => {
     !bankName ||
     !accountType
   ) {
-    return res.status(404).json({ error: "please fill all the fields properly." });
+    return res
+      .status(404)
+      .json({ error: "Please fill all the fields properly." });
   }
   // validation for email
   if (!Evalidator.validate(email)) {
-    return res.json({ error: "It is not a valid syntax of email." });
+    return res.json({ error: "Credentials' validation error e." });
   }
   // checking whether entired password or confirmed password is same or not.
   if (password != cPassword) {
-    return res.json({ error: "Password doesn't match" });
+    return res.json({ error: "Credentials' validation error p." });
   }
 
+  // aadhar card validation
   if (!Avalidator.isValidNumber(aadhaarCard)) {
-    return res.json({ error: "It is not a valid aadhaar card number" });
+    return res.json({ error: "Credentials' validation error a." });
   }
 
+  // const aadhaarExist = User.findOne({aadhaarCard: aadhaarCard});
+  // console.log(aadhaarExist);
+  // if(aadhaarExist){
+  //   return res.json({ error: "Credentials' validation error an." });
+  // }
   // checking bank balance
   if (bankBalance < 1000) {
     return res.json({ error: "Bank balance is less than required." });
@@ -73,15 +81,15 @@ module.exports = async (req, res) => {
       return res.status(404).json({ error: "email already exists." });
     }
 
-    const accountNumber  = nolookalikes(10);
-    const CIF = Math.floor(Math.random()*1000000000000);
-    let now = new Date();
-    const openingDate = now.getFullYear();
+    const accountNumber = nolookalikes(10);
+    const CIF = Math.floor(Math.random() * 1000000000000);
+    let openingDate = new Date();
+    // const openingDate = now.getFullYear();
     let address = {
       city: city,
       state: state,
-      country: country
-    }
+      country: country,
+    };
     // registering the user.
     const user = new User({
       name,
@@ -102,7 +110,7 @@ module.exports = async (req, res) => {
       bankBalance,
       bankName,
       accountType,
-      CIF
+      CIF,
     });
 
     const userRegister = await user.save();
@@ -110,11 +118,25 @@ module.exports = async (req, res) => {
 
     if (userRegister) {
       const token = await userLogin.generateAuthToken();
-      res.status(201).json({ success: "true", message: "user registered successfully", accountNumber, CIF, token });
+      return res
+        .status(201)
+        .json({
+          success: "true",
+          message: "user registered successfully",
+          accountNumber,
+          CIF,
+          token,
+        });
     } else {
-      res.status(404).json({ success: "false", message: "user is not registered successfully"});
+      return res
+        .status(404)
+        .json({
+          success: "false",
+          error: "user is not registered successfully",
+        });
     }
   } catch (err) {
     console.log(err);
+    return res.status(404).json({ error: err });
   }
 };

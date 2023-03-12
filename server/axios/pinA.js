@@ -5,22 +5,21 @@ const functionality = require("../controllers/functionalities");
 
 module.exports = function () {
   //questions
-const pinQues = [
-  {
-    type: "input",
-    name: "accountNumber",
-    message: "Enter Account Number: ",
-  },
-  {
-    type: "password",
-    name: "newPin",
-    message: "Enter New Pin: ",
-  },
-];
+  const pinQues = [
+    {
+      type: "input",
+      name: "accountNumber",
+      message: "Enter Account Number: ",
+    },
+    {
+      type: "password",
+      name: "newPin",
+      message: "Enter New Pin: ",
+    },
+  ];
 
   //update pin axios
   async function pinRequest(answers) {
-
     const userToken = retrieveUserToken();
 
     let res = await axios.post(
@@ -34,14 +33,16 @@ const pinQues = [
         },
       }
     );
-
-    console.log(res.data.message, "\n");
-    functionality();
-
+    if (res.data.success === true) {
+      console.log(res.data.message, "\n");
+      functionality();
+    }else{
+      console.log(res.data.error);
+    }
   }
 
   //inquirer
-        inquirer.prompt(pinQues).then((answers) => {
-          pinRequest(answers);
-        });
+  inquirer.prompt(pinQues).then((answers) => {
+    pinRequest(answers);
+  });
 };

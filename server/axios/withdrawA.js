@@ -3,9 +3,8 @@ const axios = require("axios");
 const retrieveUserToken = require("../utility/retrieveUserToken");
 const functionality = require("../controllers/functionalities");
 
-module.exports = function(){
-
-    //Questions
+module.exports = function () {
+  //Questions
   const withdrawalQues = [
     {
       type: "password",
@@ -35,13 +34,16 @@ module.exports = function(){
       }
     );
 
-    console.log(res.data.message, "\n");
-    functionality();
-
+    if (res.data.success === true) {
+      console.log(res.data.message, "\n");
+      functionality();
+    } else {
+      console.log(res.data.error, "\n");
+    }
   }
 
   //inquirer
   inquirer.prompt(withdrawalQues).then((answers) => {
     withdrawalRequest(answers);
   });
-}
+};

@@ -33,9 +33,13 @@ module.exports = function () {
         },
       }
     );
-
+    if(res.data.success === true){
     console.log(res.data.message, "\n");
     functionality();
+    }else{
+      console.log(res.data.error, "\n");
+    }
+
   }
 
   //inquirer

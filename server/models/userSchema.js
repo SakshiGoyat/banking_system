@@ -1,12 +1,7 @@
 const mongoose = require("mongoose");
-// const nolookalikes = require("nanoid-generate/nolookalikes");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-// const { customAlphabet }  = import("nanoid");
-// var _nanoid = import("nanoid");
-// const nanoid = customAlphabet("1234567890", 10);
 
-// const nolookalikesRndString = nolookalikes(10);
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -46,11 +41,10 @@ const userSchema = new mongoose.Schema({
   aadhaarCard: {
     type: String,
     required: true,
-    unique: true,
   },
 
   PANCard: {
-    type: Number,
+    type: String,
     required: true,
     unique: true,
     maxLength: 10,
@@ -74,7 +68,6 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     immutable: true,
-
   },
   openingDate: {
     type: String,
@@ -100,17 +93,23 @@ const userSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  fds: [],
-
+  fds: [
+    {
+      fd: {
+        type: Object,
+      },
+    },
+  ],
 });
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    // console.log("hi from bcrypt");
     let newPassword = this.password.toString();
     this.password = await bcrypt.hash(newPassword, 12);
     let newCpassword = this.cPassword.toString();
     this.cPassword = await bcrypt.hash(newCpassword, 12);
+    // let newpin = this.pin.toString();
+    // this.pin = await bcrypt.hash(newpin, 10);
   }
 
   if (this.isModified("pin")) {
@@ -118,10 +117,10 @@ userSchema.pre("save", async function (next) {
     this.pin = await bcrypt.hash(newpin, 10);
   }
 
-  if (this.isModified("PhoneNo")) {
-    let newPhone = this.PhoneNo.toString();
-    this.PhoneNo = await bcrypt.hash(newPhone, 10);
-  }
+  // if (this.isModified("PhoneNo")) {
+  //   let newPhone = this.PhoneNo.toString();
+  //   this.PhoneNo = await bcrypt.hash(newPhone, 10);
+  // }
   next();
 });
 

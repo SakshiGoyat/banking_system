@@ -6,15 +6,25 @@ module.exports = async (req, res) => {
   try {
     const { pin, amount } = req.body.data;
     if (!pin || !amount) {
-      return res.json({ error: "invalid credentials" });
+      return res.json({ success: false, error: "invalid credentials" });
     }
     const userExist = await User.findOne({ email: req.authuser.email });
-
     if (userExist) {
+      console.log(pin);
+      console.log(userExist.pin);
       const ifMatch = await bcrypt.compare(pin, userExist.pin);
 
+      if (!ifMatch) {
+        return res.json({
+          success: false,
+          error: "Pin does not match",
+        });
+      }
       if (ifMatch) {
-        res.json({ message: `Transaction successful and Rs.${amount}` });
+        res.json({
+          success: true,
+          message: `Transaction successful and Rs.${amount} deposited.`,
+        });
         const updated = await User.updateOne(
           { email: userExist.email },
           {

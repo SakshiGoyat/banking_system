@@ -3,13 +3,13 @@
                     | Bank of Origin |
                      ----------------
     Name: sakshi
-    Account Number: gx5LxcKieX
-    Token: 3503
-    Amount: Rs.2000,
+    Account Number: AUXdnh7TN9
+    Token: 469
+    Amount: Rs.200,
     Interest Rate: 3
     Minimum time: 7 days
     Maximum time: 45 days
-    Fd Date: 2023-03-11T17:13:27.577Z
-    Nominee: musu
+    Fd Date: 2023-03-12T06:50:20.515Z
+    Nominee: idhu
 -----------------------------------------------------------------
     

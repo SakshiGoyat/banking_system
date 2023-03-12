@@ -106,7 +106,8 @@ module.exports = function () {
     };
     let res = await axios(config);
 
-    const passbookArray = `
+    if (res.data.success === "true") {
+      const passbookArray = `
 -----------------------------------------------------------------------
                       |Bank of Origin|
                        --------------
@@ -121,24 +122,24 @@ module.exports = function () {
 -------------------------------------------------------------------------
       `;
 
-    fs.writeFile("passbook.txt", passbookArray, function (err) {
-      if (err) throw err;
-    });
+      fs.writeFile("passbook.txt", passbookArray, function (err) {
+        if (err) throw err;
+      });
 
-    fs.writeFile("accountNumber.txt", res.data.accountNumber, function (err) {
-      if (err) throw err;
-    });
+      fs.writeFile("accountNumber.txt", res.data.accountNumber, function (err) {
+        if (err) throw err;
+      });
 
-    console.log(res.data.message);
-    console.log();
+      console.log(res.data.message, "\n");
 
-    fs.writeFile("token.txt", res.data.token, function (err) {
-      if (err) throw err;
-    });
+      fs.writeFile("token.txt", res.data.token, function (err) {
+        if (err) throw err;
+      });
 
-    if (res.data.success === "true") {
       console.log(passbookArray, "\n");
       functionality();
+    } else {
+      console.log(res.data);
     }
   }
 
@@ -147,5 +148,3 @@ module.exports = function () {
     registerRequest(answers);
   });
 };
-
-

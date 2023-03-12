@@ -4,29 +4,41 @@ const User = require("../models/userSchema");
 module.exports = async (req, res) => {
   try {
     const { accountNumber } = req.body.data;
-    let newPin = req.body.data;
+    const newPin = req.body.data.newPin;
 
     if (!accountNumber || !newPin) {
-      return res.json({ error: "Please fill all the fields properly." });
+      return res.json({
+        success: false,
+        error: "Please fill all the fields properly.",
+      });
     } else if (accountNumber != req.authuser.accountNumber) {
-      return res.json({ error: "Invalid credentials." });
+      return res.json({ success: false, error: "Invalid credentials." });
     } else {
-      const userExist = await User.findOne({ accountNumber: accountNumber, email: req.authuser.email });
-
+      const userExist = await User.findOne({
+        accountNumber: accountNumber,
+        email: req.authuser.email,
+      });
+      console.log("Before updation " + req.authuser.pin);
       // to hash
       let newpin = await newPin.toString();
-      newPin = await bcrypt.hash(newpin, 10);
-
+      const hashPin = await bcrypt.hash(newpin, 10);
+      console.log(hashPin);
       if (userExist) {
         const updated = await User.updateOne(
           { accountNumber: accountNumber },
           {
             $set: {
-              pin: newPin,
+              pin: hashPin,
             },
           }
         );
-        return res.json({ message: "Pin is updated successfully." });
+        console.log(updated);
+        console.log("After updation " + req.authuser.pin);
+
+        return res.json({
+          success: true,
+          message: "Pin has been updated successfully.",
+        });
       }
     }
   } catch (err) {

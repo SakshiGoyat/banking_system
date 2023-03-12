@@ -1,4 +1,5 @@
 const Fd = require("../models/fdSchema");
+const User = require("../models/userSchema");
 
 const fdir = [
   [7, 45, 3, 3.5],
@@ -14,9 +15,14 @@ module.exports = async (req, res) => {
     if (!amount || !option || !nominee) {
       return res
         .status(400)
-        .json({ error: "pls fill the credentials correctly." });
+        .json({ message: "Please fill the credentials correctly." });
     }
 
+    if (req.authuser.bankBalance <= amount) {
+      return res
+        .status(404)
+        .json({ message: "Sufficient bank balance is not available." });
+    }
     //name
     const name = req.authuser.name;
     // generating token
@@ -51,9 +57,17 @@ module.exports = async (req, res) => {
     });
 
     newFd.save();
-    
-    // req.authuser.fd = req.authuser.fd.push(newFd);
-    req.authuser.fds = req.authuser.fds.push(newFd);
+
+    const updated = await User.updateOne(
+      { accountNumber: accountNumber },
+      {
+        $set: {
+          bankBalance: Number(req.authuser.bankBalance) - Number(amount),
+        },
+      }
+    );
+    req.authuser.fds = await req.authuser.fds.concat({ fd: newFd });
+    // req.authuser.fds.push(newFd);
     console.log(req.authuser.fds);
     res.json({ message: "Fd is successfully made.", newFd });
   } catch (err) {
