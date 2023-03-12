@@ -7,7 +7,7 @@ module.exports = async (req, res) => {
     const { pin, accountNumber, amount, bankName } = req.body.data;
 
     if (!pin || !accountNumber || !amount || !bankName) {
-      return res.json({ error: "Invalid credentials" });
+      return res.json({ error: "Please fill all the credentials properly." });
     }
 
     const currentUser = await User.findOne({ email: req.authuser.email });

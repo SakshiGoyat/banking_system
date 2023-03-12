@@ -9,7 +9,7 @@ module.exports = function () {
     "4. Transfer money",
     "5. Change pin",
     "6. Transactions history",
-    "7. Fd",
+    "7. Fixed deposit",
     "8. Delete account",
     "9. Exit",
   ];
