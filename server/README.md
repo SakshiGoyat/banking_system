@@ -57,6 +57,7 @@ Commands:
     banking-system start
 ```
 ### Screenshot
+![alt text](https://github.com/SakshiGoyat/banking_system/blob/master/server/images/banking-system-g.png?raw=true)
 ![alt text](https://github.com/SakshiGoyat/banking_system/blob/master/server/images/banking-system-s1.png?raw=true)
 
 To create an account :
